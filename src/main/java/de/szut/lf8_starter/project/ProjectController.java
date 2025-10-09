@@ -40,4 +40,20 @@ public class ProjectController {
         projectEntity = this.projectService.create(projectEntity);
         return this.projectMapper.mapToGetDto(projectEntity);
     }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a project by ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Project found successfully",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = ProjectGetDto.class))),
+        @ApiResponse(responseCode = "404", description = "Project not found",
+            content = @Content),
+        @ApiResponse(responseCode = "401", description = "Unauthorized",
+            content = @Content)
+    })
+    public ProjectGetDto getProjectById(@PathVariable Long id) {
+        ProjectEntity projectEntity = this.projectService.readById(id);
+        return this.projectMapper.mapToGetDto(projectEntity);
+    }
 }
