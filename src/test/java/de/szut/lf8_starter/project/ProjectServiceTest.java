@@ -10,12 +10,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProjectService Tests")
@@ -114,5 +115,44 @@ class ProjectServiceTest {
         );
 
         assertEquals("Projekt mit der ID " + zeroId + " existiert nicht.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("deleteById - Erfolgreiches Löschen")
+    void deleteById_ExistingProject_Success() {
+        // Given
+        Long id = 1L;
+        when(projectRepository.findById(id)).thenReturn(Optional.of(testProject));
+        doNothing().when(projectRepository).delete(testProject);
+
+        // When
+        projectService.deleteById(id);
+
+        // Then
+        verify(projectRepository, times(1)).delete(testProject);
+    }
+
+    @Test
+    @DisplayName("deleteById - Projekt nicht gefunden - wirft ResourceNotFoundException")
+    void deleteById_NotFound_ThrowsResourceNotFoundException() {
+        Long id = 999L;
+        when(projectRepository.findById(id)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> projectService.deleteById(id));
+        assertEquals("Projekt mit der ID " + id + " existiert nicht.", ex.getMessage());
+    }
+
+    @Test
+    @DisplayName("deleteById - Konflikt bei Mitarbeiterzuordnungen - wirft ResponseStatusException CONFLICT")
+    void deleteById_Conflict_ThrowsResponseStatusException() {
+        Long id = 2L;
+        ProjectEntity projectWithEmployees = new ProjectEntity();
+        projectWithEmployees.setId(id);
+        projectWithEmployees.getEmployeeIds().add(10L);
+
+        when(projectRepository.findById(id)).thenReturn(Optional.of(projectWithEmployees));
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> projectService.deleteById(id));
+        assertEquals(org.springframework.http.HttpStatus.CONFLICT, ex.getStatusCode());
     }
 }

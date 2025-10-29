@@ -9,16 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProjectController.class)
+@WithMockUser
 @DisplayName("ProjectController Tests")
 class ProjectControllerTest {
 
@@ -123,5 +131,54 @@ class ProjectControllerTest {
         mockMvc.perform(get("/projects/{id}", zeroId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("GET /projects - Alle Projekte abrufen")
+    void getAllProjects_ReturnsListOfProjects() throws Exception {
+        // Given
+        List<ProjectEntity> projects = List.of(testProject);
+        when(projectService.readAll()).thenReturn(projects);
+        when(projectMapper.mapToGetDto(testProject)).thenReturn(testProjectDto);
+
+        // When & Then
+        mockMvc.perform(get("/projects")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].designation").value("Test Projekt"));
+    }
+
+    @Test
+    @DisplayName("DELETE /projects/{id} - Erfolgreiches Löschen (204)")
+    void deleteProject_ExistingProject_ReturnsNoContent() throws Exception {
+        Long projectId = 1L;
+        doNothing().when(projectService).deleteById(projectId);
+
+        mockMvc.perform(delete("/projects/{id}", projectId).with(csrf()).with(user("test").roles("USER")))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("DELETE /projects/{id} - Projekt nicht gefunden (404)")
+    void deleteProject_NotFound_ReturnsNotFound() throws Exception {
+        Long nonExistentId = 999L;
+        doThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."))
+                .when(projectService).deleteById(nonExistentId);
+
+        mockMvc.perform(delete("/projects/{id}", nonExistentId).with(csrf()).with(user("test").roles("USER")))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /projects/{id} - Konflikt bei Mitarbeiterzuordnungen (409)")
+    void deleteProject_Conflict_ReturnsConflict() throws Exception {
+        Long id = 2L;
+        doThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT))
+                .when(projectService).deleteById(id);
+
+        mockMvc.perform(delete("/projects/{id}", id).with(csrf()).with(user("test").roles("USER")))
+                .andExpect(status().isConflict());
     }
 }

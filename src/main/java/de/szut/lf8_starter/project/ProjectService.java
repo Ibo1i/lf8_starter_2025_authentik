@@ -60,6 +60,13 @@ public class ProjectService {
 
     public void deleteById(Long id) {
         ProjectEntity project = readById(id);
+
+        // Abhängigkeiten prüfen: dürfen keine Mitarbeiter zugeordnet sein
+        if (project.getEmployeeIds() != null && !project.getEmployeeIds().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Projekt hat noch Mitarbeiterzuordnungen und kann nicht gelöscht werden.");
+        }
+
         this.repository.delete(project);
     }
 
