@@ -215,4 +215,32 @@ public class ProjectService {
                 "Tatsächliches Enddatum darf nicht vor dem Startdatum liegen");
         }
     }
+
+    /**
+     * Aktualisiert ein Projekt mit neuen Daten aus dem DTO
+     */
+    public ProjectEntity updateFromDTO(Long id, de.szut.lf8_starter.dto.UpdateProjectDTO updateDTO) {
+        // Projekt laden
+        ProjectEntity projekt = readById(id);
+
+        // Validierung: Enddatum nach Startdatum
+        if (updateDTO.getPlannedEndDate().isBefore(updateDTO.getStartDate())) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST,
+                    "Enddatum muss nach dem Startdatum liegen"
+            );
+        }
+
+        // Daten aktualisieren
+        projekt.setDesignation(updateDTO.getDesignation());
+        projekt.setResponsibleEmployeeId(updateDTO.getResponsibleEmployeeId());
+        projekt.setCustomerId(updateDTO.getCustomerId());
+        projekt.setCustomerContactPerson(updateDTO.getCustomerContactPerson());
+        projekt.setComment(updateDTO.getComment());
+        projekt.setStartDate(updateDTO.getStartDate());
+        projekt.setPlannedEndDate(updateDTO.getPlannedEndDate());
+
+        // Validierung und Speichern
+        return update(projekt);
+    }
 }

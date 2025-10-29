@@ -56,4 +56,24 @@ public class ProjectController {
         ProjectEntity projectEntity = this.projectService.readById(id);
         return this.projectMapper.mapToGetDto(projectEntity);
     }
+    @PutMapping("/{id}")
+    @Operation(summary = "Update an existing project")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Project updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProjectGetDto.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Project not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content)
+    })
+    public ProjectGetDto updateProject(
+            @PathVariable Long id,
+            @RequestBody @Valid de.szut.lf8_starter.dto.UpdateProjectDTO updateDTO
+    ) {
+        ProjectEntity updatedProject = this.projectService.updateFromDTO(id, updateDTO);
+        return this.projectMapper.mapToGetDto(updatedProject);
+    }
 }

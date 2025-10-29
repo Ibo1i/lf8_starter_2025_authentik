@@ -1,0 +1,13 @@
+### Projekt aktualisieren
+PUT http://localhost:8080/projects/1
+Content-Type: application/json
+
+{
+  "designation": "Aktualisiertes Projekt",
+  "responsibleEmployeeId": 2,
+  "customerId": 2,
+  "customerContactPerson": "Neue Person",
+  "comment": "Aktualisierter Kommentar",
+  "startDate": "2025-12-01",
+  "plannedEndDate": "2026-06-30"
+}
