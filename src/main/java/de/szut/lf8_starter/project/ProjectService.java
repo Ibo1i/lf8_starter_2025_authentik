@@ -1,18 +1,22 @@
 package de.szut.lf8_starter.project;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
+import de.szut.lf8_starter.exceptionHandling.EmployeeNotFoundException;
+import de.szut.lf8_starter.exceptionHandling.EmployeeQualificationException;
+import de.szut.lf8_starter.exceptionHandling.TimeConflictException;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.dto.ProjectEmployeesDto;
 import de.szut.lf8_starter.project.dto.EmployeeProjectsDto;
+import de.szut.lf8_starter.project.dto.ConflictingProjectDto;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,22 +94,39 @@ public class ProjectService {
 
         // Validierung: Mitarbeiter existiert
         if (!employeeService.employeeExists(employeeId)) {
-            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer existiert nicht");
+            throw new EmployeeNotFoundException(employeeId);
         }
 
         // Validierung: Mitarbeiter hat die erforderliche Qualifikation
         if (!employeeService.employeeHasQualification(employeeId, qualification)) {
-            throw new ResourceNotFoundException("Mitarbeiter hat die Qualifikation " + qualification + " nicht.");
+            throw new EmployeeQualificationException(qualification);
         }
 
         // Validierung: Zeitkonflikt prüfen
-        if (isEmployeeBusyInTimeRange(employeeId, project.getStartDate(), project.getPlannedEndDate(), projectId)) {
-            String timeRange = project.getStartDate() + " bis " + project.getPlannedEndDate();
-            throw new ResponseStatusException(HttpStatus.REQUEST_TIMEOUT,
-                "Mitarbeiter ist im Zeitraum (" + timeRange + ") schon verplant");
+        List<ProjectEntity> conflicting = repository.findProjectsInTimeRange(project.getStartDate(), project.getPlannedEndDate())
+            .stream()
+            .filter(p -> !p.getId().equals(projectId) && p.getEmployeeIds().contains(employeeId))
+            .collect(Collectors.toList());
+
+        if (!conflicting.isEmpty()) {
+            DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
+            List<ConflictingProjectDto> conflictingDtos = conflicting.stream()
+                .map(p -> new ConflictingProjectDto(p.getId(), p.getDesignation(), p.getStartDate(), p.getActualEndDate() != null ? p.getActualEndDate() : p.getPlannedEndDate()))
+                .collect(Collectors.toList());
+
+            String firstStart = conflictingDtos.get(0).getStartDate().format(df).toString();
+            String firstEnd = conflictingDtos.get(0).getEndDate().format(df).toString();
+            throw new TimeConflictException(firstStart, firstEnd, conflictingDtos);
         }
 
         // Mitarbeiter hinzufügen
+        if (project.getEmployeeIds() == null) {
+            project.setEmployeeIds(new java.util.HashSet<>());
+        }
+        if (project.getEmployeeQualifications() == null) {
+            project.setEmployeeQualifications(new java.util.HashMap<>());
+        }
+
         project.getEmployeeIds().add(employeeId);
         project.getEmployeeQualifications().put(employeeId, qualification);
 

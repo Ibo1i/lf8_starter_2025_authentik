@@ -41,3 +41,13 @@ Content-Type: application/json
 ### Projekt löschen
 DELETE http://localhost:8080/projects/1
 Content-Type: application/json
+
+
+### Mitarbeiter einem Projekt zuweisen
+POST http://localhost:8080/projects/1/employees
+Content-Type: application/json
+
+{
+  "employeeId": 1,
+  "qualification": "Java"
+}

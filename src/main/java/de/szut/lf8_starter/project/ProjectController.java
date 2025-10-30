@@ -1,7 +1,10 @@
 package de.szut.lf8_starter.project;
 
+import de.szut.lf8_starter.project.dto.EmployeeAssignmentDto;
+import de.szut.lf8_starter.project.dto.EmployeeAssignmentResponseDto;
 import de.szut.lf8_starter.project.dto.ProjectCreateDto;
 import de.szut.lf8_starter.project.dto.ProjectGetDto;
+import de.szut.lf8_starter.project.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,10 +23,12 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ProjectMapper projectMapper;
+    private final EmployeeService employeeService;
 
-    public ProjectController(ProjectService projectService, ProjectMapper projectMapper) {
+    public ProjectController(ProjectService projectService, ProjectMapper projectMapper, EmployeeService employeeService) {
         this.projectService = projectService;
         this.projectMapper = projectMapper;
+        this.employeeService = employeeService;
     }
 
     @PostMapping
@@ -106,5 +111,28 @@ public class ProjectController {
     })
     public void deleteProject(@PathVariable Long id) {
         this.projectService.deleteById(id);
+    }
+
+    @PostMapping("/{projectId}/employees")
+    @Operation(summary = "Assign an employee to a project")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Employee assigned successfully",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = EmployeeAssignmentResponseDto.class))),
+        @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Project or employee not found", content = @Content),
+        @ApiResponse(responseCode = "409", description = "Time conflict", content = @Content),
+        @ApiResponse(responseCode = "422", description = "Missing qualification", content = @Content)
+    })
+    public EmployeeAssignmentResponseDto assignEmployeeToProject(
+            @PathVariable Long projectId,
+            @RequestBody @Valid EmployeeAssignmentDto request
+    ) {
+        ProjectEntity updated = this.projectService.addEmployeeToProject(projectId, request.getEmployeeId(), request.getQualification());
+
+        String employeeName = this.employeeService.getEmployeeName(request.getEmployeeId());
+
+        return new EmployeeAssignmentResponseDto(updated.getId(), updated.getDesignation(), request.getEmployeeId(), employeeName);
     }
 }
