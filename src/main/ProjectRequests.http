@@ -1,3 +1,28 @@
+### Neues Projekt erstellen
+POST http://localhost:8080/projects
+Content-Type: application/json
+
+{
+  "designation": "Neues Projekt",
+  "responsibleEmployeeId": 1,
+  "customerId": 1,
+  "customerContactPerson": "Max Mustermann",
+  "comment": "Dies ist ein neues Projekt",
+  "startDate": "2025-10-01",
+  "plannedEndDate": "2026-03-31"
+}
+
+
+### Projekt abrufen
+GET http://localhost:8080/projects/1
+Content-Type: application/json
+
+
+### Alle Projekte auflisten
+GET http://localhost:8080/projects
+Content-Type: application/json
+
+
 ### Projekt aktualisieren
 PUT http://localhost:8080/projects/1
 Content-Type: application/json
@@ -11,3 +36,8 @@ Content-Type: application/json
   "startDate": "2025-12-01",
   "plannedEndDate": "2026-06-30"
 }
+
+
+### Projekt löschen
+DELETE http://localhost:8080/projects/1
+Content-Type: application/json
