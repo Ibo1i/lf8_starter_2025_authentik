@@ -61,3 +61,8 @@ Content-Type: application/json
 ### Mitarbeiterliste eines Projekts abrufen
 GET http://localhost:8080/projects/1/employees
 Content-Type: application/json
+
+
+### Projekte eines Mitarbeiters abrufen
+GET http://localhost:8080/employees/1/projects
+Content-Type: application/json

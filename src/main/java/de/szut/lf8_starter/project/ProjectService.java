@@ -1,17 +1,13 @@
 package de.szut.lf8_starter.project;
 
-import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
-import de.szut.lf8_starter.exceptionHandling.EmployeeNotFoundException;
-import de.szut.lf8_starter.exceptionHandling.EmployeeQualificationException;
-import de.szut.lf8_starter.exceptionHandling.TimeConflictException;
-import de.szut.lf8_starter.exceptionHandling.DuplicateAssignmentException;
-import de.szut.lf8_starter.project.service.EmployeeService;
-import de.szut.lf8_starter.project.service.CustomerService;
-import de.szut.lf8_starter.project.dto.ProjectEmployeesDto;
-import de.szut.lf8_starter.project.dto.EmployeeProjectsDto;
+import de.szut.lf8_starter.exceptionHandling.*;
 import de.szut.lf8_starter.project.dto.ConflictingProjectDto;
-import org.springframework.stereotype.Service;
+import de.szut.lf8_starter.project.dto.EmployeeProjectsDto;
+import de.szut.lf8_starter.project.dto.ProjectEmployeesDto;
+import de.szut.lf8_starter.project.service.CustomerService;
+import de.szut.lf8_starter.project.service.EmployeeService;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -114,7 +110,7 @@ public class ProjectService {
         List<ProjectEntity> conflicting = repository.findProjectsInTimeRange(project.getStartDate(), project.getPlannedEndDate())
             .stream()
             .filter(p -> !p.getId().equals(projectId) && p.getEmployeeIds().contains(employeeId))
-            .collect(Collectors.toList());
+                .toList();
 
         if (!conflicting.isEmpty()) {
             DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -180,7 +176,7 @@ public class ProjectService {
     public EmployeeProjectsDto getEmployeeProjects(Long employeeId) {
         // Validierung: Mitarbeiter existiert
         if (!employeeService.employeeExists(employeeId)) {
-            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer existiert nicht");
+            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer " + employeeId + " existiert nicht");
         }
 
         List<ProjectEntity> projects = findProjectsByEmployeeId(employeeId);
