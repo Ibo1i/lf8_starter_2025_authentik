@@ -1,6 +1,9 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.Integrationtest;
 
 import de.szut.lf8_starter.Lf8StarterApplication;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectRepository;
+import de.szut.lf8_starter.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = Lf8StarterApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProjectControllerIntegrationTest {
+public class ProjectControllerIntegrationTest extends AbstractIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -44,7 +47,8 @@ public class ProjectControllerIntegrationTest {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+                new ParameterizedTypeReference<>() {
+                }
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -72,14 +76,15 @@ public class ProjectControllerIntegrationTest {
                 url,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+                new ParameterizedTypeReference<>() {
+                }
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().size()).isEqualTo(1);
 
-        Map<?,?> map = response.getBody().get(0);
+        Map<?,?> map = response.getBody().getFirst();
         assertThat(map.get("designation")).isEqualTo("Integration Test Projekt");
         // Jackson deserializes numbers to Integer by default when values fit
         assertThat(((Number) map.get("customerId")).longValue()).isEqualTo(123L);

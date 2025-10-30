@@ -1,6 +1,10 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.UnitTest;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
+import de.szut.lf8_starter.project.ProjectController;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectMapper;
+import de.szut.lf8_starter.project.ProjectService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WithMockUser
 @WebMvcTest(ProjectController.class)
-class ProjectControllerRemoveEmployeeTest {
+class ProjectControllerRemoveEmployeeUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -86,5 +90,21 @@ class ProjectControllerRemoveEmployeeTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("Mitarbeiternummer hat ein ungültiges Format."));
+    }
+
+    public ProjectMapper getProjectMapper() {
+        return projectMapper;
+    }
+
+    public void setProjectMapper(ProjectMapper projectMapper) {
+        this.projectMapper = projectMapper;
+    }
+
+    public EmployeeService getEmployeeService() {
+        return employeeService;
+    }
+
+    public void setEmployeeService(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 }

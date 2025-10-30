@@ -1,16 +1,18 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.UnitTest;
 
+import de.szut.lf8_starter.exceptionHandling.DuplicateAssignmentException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeNotFoundException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeQualificationException;
 import de.szut.lf8_starter.exceptionHandling.TimeConflictException;
-import de.szut.lf8_starter.exceptionHandling.DuplicateAssignmentException;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectRepository;
+import de.szut.lf8_starter.project.ProjectService;
 import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProjectServiceAssignTest {
+class ProjectServiceAssignUnitTest {
 
     @Mock
     private ProjectRepository projectRepository;

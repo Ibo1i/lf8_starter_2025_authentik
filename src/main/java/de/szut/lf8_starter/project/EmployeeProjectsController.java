@@ -3,6 +3,7 @@ package de.szut.lf8_starter.project;
 import de.szut.lf8_starter.project.dto.EmployeeProjectsDto;
 import de.szut.lf8_starter.project.dto.EmployeeProjectsResponseDto;
 import de.szut.lf8_starter.project.dto.ProjectSummaryDto;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ public class EmployeeProjectsController {
     }
 
     @GetMapping(path = "/employees/{employeeId}/projects", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get projects for a specific employee")
     public EmployeeProjectsResponseDto getProjectsForEmployee(@PathVariable("employeeId") Long employeeId) {
         EmployeeProjectsDto dto = this.projectService.getEmployeeProjects(employeeId);
 

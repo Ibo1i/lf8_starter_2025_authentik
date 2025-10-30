@@ -1,6 +1,8 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.UnitTest;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
+import de.szut.lf8_starter.project.EmployeeProjectsController;
+import de.szut.lf8_starter.project.ProjectService;
 import de.szut.lf8_starter.project.dto.EmployeeProjectsDto;
 import de.szut.lf8_starter.project.dto.EmployeeProjectsDto.ProjectWithRoleDto;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(EmployeeProjectsController.class)
 @WithMockUser
-@DisplayName("EmployeeProjectsController Tests")
-class EmployeeProjectsControllerTest {
+@DisplayName("EmployeeProjectsController Get Employee Projects Tests")
+class EmployeeProjectsControllerGetEmployeeProjectsUnitTest {
 
     @Autowired
     private MockMvc mockMvc;

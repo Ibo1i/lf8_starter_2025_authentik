@@ -1,6 +1,6 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.3.3"
+    id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
 }
 
@@ -13,10 +13,8 @@ java {
     }
 }
 
-configurations {
-    compileOnly {
-        extendsFrom(configurations.annotationProcessor.get())
-    }
+configurations.compileOnly {
+    extendsFrom(configurations.annotationProcessor.get())
 }
 
 repositories {
@@ -31,13 +29,31 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.3.3")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.3.3")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client") {
+        exclude(group = "net.minidev", module = "json-smart")
+    }
+    implementation("net.minidev:json-smart:2.5.2")
     runtimeOnly("org.postgresql:postgresql")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0") {
+        exclude(group = "org.apache.commons", module = "commons-lang3")
+    }
+    implementation("org.apache.commons:commons-lang3:3.15.0")
+    implementation("org.apache.commons:commons-compress:1.27.0")
     testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.testcontainers:testcontainers:1.20.0")
-    testImplementation("org.testcontainers:postgresql:1.20.0")
+    testImplementation("org.testcontainers:testcontainers:1.20.2")
+    testImplementation("org.testcontainers:postgresql:1.20.2")
+    testRuntimeOnly("com.h2database:h2")
+}
+
+configurations.all {
+    exclude(group = "net.minidev", module = "json-smart")
+    exclude(group = "org.apache.commons", module = "commons-lang3")
+    exclude(group = "org.apache.commons", module = "commons-compress")
+    resolutionStrategy {
+        force("org.apache.commons:commons-lang3:3.15.0")
+        force("org.apache.commons:commons-compress:1.27.0")
+    }
 }
 
 tasks.withType<Test> {

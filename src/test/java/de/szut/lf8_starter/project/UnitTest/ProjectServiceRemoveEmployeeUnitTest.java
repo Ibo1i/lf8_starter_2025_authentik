@@ -1,6 +1,9 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.UnitTest;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectRepository;
+import de.szut.lf8_starter.project.ProjectService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ProjectServiceRemoveEmployeeTest {
+class ProjectServiceRemoveEmployeeUnitTest {
 
     @Mock
     private ProjectRepository repository;

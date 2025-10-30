@@ -1,6 +1,9 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.UnitTest;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectRepository;
+import de.szut.lf8_starter.project.ProjectService;
 import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProjectService Tests")
-class ProjectServiceTest {
+class ProjectServiceUnitTest {
 
     @Mock
     private ProjectRepository projectRepository;
@@ -175,8 +178,8 @@ class ProjectServiceTest {
         assertEquals(testProject.getDesignation(), dto.getDesignation());
         assertNotNull(dto.getEmployees());
         assertEquals(1, dto.getEmployees().size());
-        assertEquals(10L, dto.getEmployees().get(0).getEmployeeId());
-        assertEquals("Developer", dto.getEmployees().get(0).getQualification());
+        assertEquals(10L, dto.getEmployees().getFirst().getEmployeeId());
+        assertEquals("Developer", dto.getEmployees().getFirst().getQualification());
     }
 
     @Test

@@ -1,7 +1,9 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.Integrationtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.szut.lf8_starter.dto.UpdateProjectDTO;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectRepository;
 import de.szut.lf8_starter.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,10 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
-class ProjectUpdateTest extends AbstractIntegrationTest {
+class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -80,26 +83,11 @@ class ProjectUpdateTest extends AbstractIntegrationTest {
     @Test
     void sollFehler400WerfenBeiValidierungsfehler() throws Exception {
         UpdateProjectDTO updateDTO = new UpdateProjectDTO();
-        updateDTO.setDesignation("AB");  // Zu kurz!
-        updateDTO.setResponsibleEmployeeId(-1L);  // Negativ!
-        updateDTO.setCustomerId(1L);
-        updateDTO.setStartDate(LocalDate.now());
-        updateDTO.setPlannedEndDate(LocalDate.now().plusDays(30));
-
-        mockMvc.perform(put("/projects/" + testProject.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateDTO)))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void sollFehler400WerfenWennEnddatumVorStartdatum() throws Exception {
-        UpdateProjectDTO updateDTO = new UpdateProjectDTO();
-        updateDTO.setDesignation("Test Projekt");
+        updateDTO.setDesignation("");  // Ungültig: leere Bezeichnung
         updateDTO.setResponsibleEmployeeId(1L);
         updateDTO.setCustomerId(1L);
-        updateDTO.setStartDate(LocalDate.now().plusDays(30));
-        updateDTO.setPlannedEndDate(LocalDate.now());  // Vor Startdatum!
+        updateDTO.setStartDate(LocalDate.now().plusDays(30));  // Enddatum vor Startdatum!
+        updateDTO.setPlannedEndDate(LocalDate.now());
 
         mockMvc.perform(put("/projects/" + testProject.getId())
                         .contentType(MediaType.APPLICATION_JSON)

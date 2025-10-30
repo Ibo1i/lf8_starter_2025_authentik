@@ -6,10 +6,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class EmployeeService {
 
-    private final RestTemplate restTemplate;
-
     public EmployeeService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
     }
 
     public boolean employeeExists(Long employeeId) {

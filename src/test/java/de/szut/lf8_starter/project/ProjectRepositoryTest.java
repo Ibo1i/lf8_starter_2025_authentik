@@ -1,6 +1,5 @@
-package de.szut.lf8_starter.repository;
+package de.szut.lf8_starter.project;
 
-import de.szut.lf8_starter.project.ProjectEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,10 +11,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class ProjektRepositoryTest {
+class ProjectRepositoryTest {
 
     @Autowired
-    private ProjektRepository repository;
+    private ProjectRepository repository;
 
     @Test
     void sollProjektSpeichernUndLaden() {
@@ -121,9 +120,9 @@ class ProjektRepositoryTest {
     @Test
     void sollProjekteNachKundeSortiertNachStartdatumFinden() {
         // Given - Projekte mit verschiedenen Startdaten
-        ProjectEntity projekt1 = erstelleTestProjektMitDatum("Projekt Z", 1L, LocalDate.of(2025, 12, 1));
-        ProjectEntity projekt2 = erstelleTestProjektMitDatum("Projekt A", 1L, LocalDate.of(2025, 11, 1));
-        ProjectEntity projekt3 = erstelleTestProjektMitDatum("Projekt M", 1L, LocalDate.of(2025, 10, 1));
+        ProjectEntity projekt1 = erstelleTestProjektMitDatum("Projekt Z", LocalDate.of(2025, 12, 1));
+        ProjectEntity projekt2 = erstelleTestProjektMitDatum("Projekt A", LocalDate.of(2025, 11, 1));
+        ProjectEntity projekt3 = erstelleTestProjektMitDatum("Projekt M", LocalDate.of(2025, 10, 1));
 
         repository.save(projekt1);
         repository.save(projekt2);
@@ -191,11 +190,11 @@ class ProjektRepositoryTest {
         );
     }
 
-    private ProjectEntity erstelleTestProjektMitDatum(String bezeichnung, Long kundenId, LocalDate startDatum) {
+    private ProjectEntity erstelleTestProjektMitDatum(String bezeichnung, LocalDate startDatum) {
         return new ProjectEntity(
                 bezeichnung,
                 1L,
-                kundenId,
+                1L,
                 "Max Mustermann",
                 "Test",
                 startDatum,

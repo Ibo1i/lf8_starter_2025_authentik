@@ -1,12 +1,13 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.Integrationtest;
 
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectRepository;
 import de.szut.lf8_starter.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -94,28 +95,4 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("Mitarbeiternummer hat ein ungültiges Format."));
     }
-
-    // @Test
-    // @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Ungültiger oder fehlender JWT-Token")
-    // @WithAnonymousUser
-    // void removeEmployee_Unauthorized() throws Exception {
-    //     Long employeeId = 10L;
-
-    //     ProjectEntity project = new ProjectEntity();
-    //     project.setDesignation("Test Project");
-    //     project.setResponsibleEmployeeId(1L);
-    //     project.setCustomerId(1L);
-    //     project.setStartDate(java.time.LocalDate.now());
-    //     project.setPlannedEndDate(java.time.LocalDate.now().plusDays(30));
-    //     project.setEmployeeIds(new java.util.HashSet<>(java.util.List.of(employeeId)));
-    //     project.setEmployeeQualifications(new java.util.HashMap<>());
-    //     project.getEmployeeQualifications().put(employeeId, "DEV");
-    //     ProjectEntity savedProject = projectRepository.save(project);
-    //     Long projectId = savedProject.getId();
-
-    //     mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
-    //             .contentType(MediaType.APPLICATION_JSON))
-    //         .andExpect(status().isUnauthorized())
-    //         .andExpect(jsonPath("$.message").value("JWT-Token ist ungültig oder fehlt."));
-    // }
 }

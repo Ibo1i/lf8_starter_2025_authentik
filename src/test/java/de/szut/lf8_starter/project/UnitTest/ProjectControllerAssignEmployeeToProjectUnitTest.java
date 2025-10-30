@@ -1,13 +1,17 @@
-package de.szut.lf8_starter.project;
+package de.szut.lf8_starter.project.UnitTest;
 
 import de.szut.lf8_starter.exceptionHandling.DuplicateAssignmentException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeNotFoundException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeQualificationException;
 import de.szut.lf8_starter.exceptionHandling.TimeConflictException;
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
+import de.szut.lf8_starter.project.ProjectController;
+import de.szut.lf8_starter.project.ProjectEntity;
+import de.szut.lf8_starter.project.ProjectMapper;
+import de.szut.lf8_starter.project.ProjectService;
+import de.szut.lf8_starter.project.service.EmployeeService;
 import org.springframework.dao.DataIntegrityViolationException;
 import de.szut.lf8_starter.project.dto.EmployeeAssignmentDto;
-import de.szut.lf8_starter.project.dto.EmployeeAssignmentResponseDto;
 import de.szut.lf8_starter.project.dto.ConflictingProjectDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +33,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@SuppressWarnings("unused")
 @WebMvcTest(ProjectController.class)
 @WithMockUser
 @DisplayName("ProjectController Assign Employee Tests")
-public class ProjectControllerAssignEmployeeTest {
+public class ProjectControllerAssignEmployeeToProjectUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,10 +49,39 @@ public class ProjectControllerAssignEmployeeTest {
     private ProjectMapper projectMapper;
 
     @MockBean
-    private de.szut.lf8_starter.project.service.EmployeeService employeeService;
+    private EmployeeService employeeService;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Test
+    @DisplayName("POST /projects/{projectId}/employees - success returns 200 with assignment DTO")
+    void assignEmployee_success_returns200() throws Exception {
+        Long projectId = 1L;
+        Long employeeId = 100L;
+        String role = "JAVA";
+
+        EmployeeAssignmentDto request = new EmployeeAssignmentDto(employeeId, role);
+
+        // Mock service to return a ProjectEntity (we'll just construct minimal response DTO in controller path)
+        // Controller returns EmployeeAssignmentResponseDto, so we can mock projectService.addEmployeeToProject to return a ProjectEntity
+        ProjectEntity returned = new ProjectEntity();
+        returned.setId(projectId);
+        returned.setDesignation("TestProjekt");
+
+        when(projectService.addEmployeeToProject(projectId, employeeId, role)).thenReturn(returned);
+        when(employeeService.getEmployeeName(employeeId)).thenReturn("Mitarbeiter " + employeeId);
+
+        mockMvc.perform(post("/projects/{projectId}/employees", projectId)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.projectId").value(projectId))
+                .andExpect(jsonPath("$.projectName").value("TestProjekt"))
+                .andExpect(jsonPath("$.employeeId").value(employeeId))
+                .andExpect(jsonPath("$.employeeName").value("Mitarbeiter " + employeeId));
+    }
 
     @Test
     @DisplayName("POST /projects/{projectId}/employees - duplicate assignment returns 409 with existingAssignment")
@@ -71,35 +105,6 @@ public class ProjectControllerAssignEmployeeTest {
             .andExpect(jsonPath("$.message").value("Mitarbeiter mit der Mitarbeiternummer " + employeeId + " ist bereits dem Projekt mit der ID " + projectId + " zugewiesen."))
             .andExpect(jsonPath("$.existingAssignment.assignedDate").value("2025-01-15"))
             .andExpect(jsonPath("$.existingAssignment.role").value(role));
-    }
-
-    @Test
-    @DisplayName("POST /projects/{projectId}/employees - success returns 200 with assignment DTO")
-    void assignEmployee_success_returns200() throws Exception {
-        Long projectId = 1L;
-        Long employeeId = 100L;
-        String role = "JAVA";
-
-        EmployeeAssignmentDto request = new EmployeeAssignmentDto(employeeId, role);
-
-        // Mock service to return a ProjectEntity (we'll just construct minimal response DTO in controller path)
-        // Controller returns EmployeeAssignmentResponseDto, so we can mock projectService.addEmployeeToProject to return a ProjectEntity
-        ProjectEntity returned = new ProjectEntity();
-        returned.setId(projectId);
-        returned.setDesignation("TestProjekt");
-
-        when(projectService.addEmployeeToProject(projectId, employeeId, role)).thenReturn(returned);
-        when(employeeService.getEmployeeName(employeeId)).thenReturn("Mitarbeiter " + employeeId);
-
-        mockMvc.perform(post("/projects/{projectId}/employees", projectId)
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.projectId").value(projectId))
-            .andExpect(jsonPath("$.projectName").value("TestProjekt"))
-            .andExpect(jsonPath("$.employeeId").value(employeeId))
-            .andExpect(jsonPath("$.employeeName").value("Mitarbeiter " + employeeId));
     }
 
     @Test
@@ -228,5 +233,13 @@ public class ProjectControllerAssignEmployeeTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isNotFound());
+    }
+
+    public ProjectMapper getProjectMapper() {
+        return projectMapper;
+    }
+
+    public void setProjectMapper(ProjectMapper projectMapper) {
+        this.projectMapper = projectMapper;
     }
 }
