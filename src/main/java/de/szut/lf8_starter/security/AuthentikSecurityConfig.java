@@ -68,6 +68,7 @@ public class AuthentikSecurityConfig {
                 "JWT-Token ist ungültig oder fehlt.",
                 request.getRequestURI(),
                 null,
+                null,
                 null
             );
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));

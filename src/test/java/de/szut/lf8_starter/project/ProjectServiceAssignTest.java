@@ -3,6 +3,7 @@ package de.szut.lf8_starter.project;
 import de.szut.lf8_starter.exceptionHandling.EmployeeNotFoundException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeQualificationException;
 import de.szut.lf8_starter.exceptionHandling.TimeConflictException;
+import de.szut.lf8_starter.exceptionHandling.DuplicateAssignmentException;
 import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,5 +104,22 @@ class ProjectServiceAssignTest {
 
         assertThrows(TimeConflictException.class, () -> projectService.addEmployeeToProject(1L, 400L, "DEV"));
     }
-}
 
+    @Test
+    @DisplayName("addEmployeeToProject - duplicate assignment")
+    void addEmployeeToProject_duplicateAssignment() {
+        project.getEmployeeIds().add(500L);
+        project.getEmployeeQualifications().put(500L, "Backend Developer");
+        project.getEmployeeAssignedDates().put(500L, LocalDate.of(2025,1,15));
+
+        when(projectRepository.findById(1L)).thenReturn(Optional.of(project));
+
+        DuplicateAssignmentException ex = assertThrows(DuplicateAssignmentException.class,
+            () -> projectService.addEmployeeToProject(1L, 500L, "Backend Developer"));
+
+        assertThat(ex.getProjectId()).isEqualTo(1L);
+        assertThat(ex.getEmployeeId()).isEqualTo(500L);
+        assertThat(ex.getAssignedDate()).isEqualTo(LocalDate.of(2025,1,15));
+        assertThat(ex.getRole()).isEqualTo("Backend Developer");
+    }
+}

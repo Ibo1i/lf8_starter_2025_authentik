@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class GlobalExceptionHandler {
             ex.getMessage(),
             request.getDescription(false).replace("uri=", ""),
             null,
+            null,
             null
         );
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
@@ -40,6 +43,7 @@ public class GlobalExceptionHandler {
             HttpStatus.NOT_FOUND.getReasonPhrase(),
             ex.getReason(),
             request.getDescription(false).replace("uri=", ""),
+            null,
             null,
             null
         );
@@ -55,6 +59,7 @@ public class GlobalExceptionHandler {
             ex.getReason(),
             request.getDescription(false).replace("uri=", ""),
             null,
+            null,
             null
         );
         return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -68,6 +73,42 @@ public class GlobalExceptionHandler {
             HttpStatus.CONFLICT.getReasonPhrase(),
             ex.getReason(),
             request.getDescription(false).replace("uri=", ""),
+            null,
+            ex.getConflictingProjects(),
+            null
+        );
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DuplicateAssignmentException.class)
+    public ResponseEntity<ApiErrorResponse> handleDuplicateAssignment(DuplicateAssignmentException ex, WebRequest request) {
+        DateTimeFormatter df = DateTimeFormatter.ISO_LOCAL_DATE;
+        String assignedDate = ex.getAssignedDate() != null ? ex.getAssignedDate().format(df) : null;
+        ApiErrorResponse.ExistingAssignmentDto existing = new ApiErrorResponse.ExistingAssignmentDto(assignedDate, ex.getRole());
+
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.CONFLICT.value(),
+            HttpStatus.CONFLICT.getReasonPhrase(),
+            ex.getMessage(),
+            request.getDescription(false).replace("uri=", ""),
+            null,
+            null,
+            existing
+        );
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
+        // Mappen von DB-Unique-Constraint-Verletzungen (z.B. parallele Anfragen) auf 409
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.CONFLICT.value(),
+            HttpStatus.CONFLICT.getReasonPhrase(),
+            "Mitarbeiter ist bereits dem Projekt zugewiesen.",
+            request.getDescription(false).replace("uri=", ""),
+            null,
             null,
             null
         );
@@ -88,6 +129,7 @@ public class GlobalExceptionHandler {
             "Pflichtfeld fehlt oder ist ungültig.",
             request.getDescription(false).replace("uri=", ""),
             errors,
+            null,
             null
         );
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
@@ -103,6 +145,7 @@ public class GlobalExceptionHandler {
             "Mitarbeiternummer hat ein ungültiges Format.",
             request.getDescription(false).replace("uri=", ""),
             null,
+            null,
             null
         );
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
@@ -116,6 +159,7 @@ public class GlobalExceptionHandler {
             HttpStatus.UNAUTHORIZED.getReasonPhrase(),
             "JWT-Token ist ungültig oder fehlt.",
             request.getDescription(false).replace("uri=", ""),
+            null,
             null,
             null
         );
@@ -132,6 +176,7 @@ public class GlobalExceptionHandler {
             ex.getReason(),
             request.getDescription(false).replace("uri=", ""),
             null,
+            null,
             null
         );
         return new ResponseEntity<>(body, status);
@@ -145,6 +190,7 @@ public class GlobalExceptionHandler {
             HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
             ex.getMessage(),
             request.getDescription(false).replace("uri=", ""),
+            null,
             null,
             null
         );

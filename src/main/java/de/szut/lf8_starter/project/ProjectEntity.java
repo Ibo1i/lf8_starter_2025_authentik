@@ -51,7 +51,8 @@ public class ProjectEntity {
     @ElementCollection
     @CollectionTable(
         name = "project_employee_assignments",
-        joinColumns = @JoinColumn(name = "project_id")
+        joinColumns = @JoinColumn(name = "project_id"),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "employee_id"})
     )
     @Column(name = "employee_id")
     private Set<Long> employeeIds = new HashSet<>();
@@ -59,11 +60,23 @@ public class ProjectEntity {
     @ElementCollection
     @CollectionTable(
         name = "project_employee_qualifications",
-        joinColumns = @JoinColumn(name = "project_id")
+        joinColumns = @JoinColumn(name = "project_id"),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "employee_id"})
     )
     @MapKeyColumn(name = "employee_id")
     @Column(name = "qualification")
     private Map<Long, String> employeeQualifications = new HashMap<>();
+
+    // New: store the date when the employee was assigned to the project
+    @ElementCollection
+    @CollectionTable(
+        name = "project_employee_assigned_dates",
+        joinColumns = @JoinColumn(name = "project_id"),
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "employee_id"})
+    )
+    @MapKeyColumn(name = "employee_id")
+    @Column(name = "assigned_date")
+    private Map<Long, LocalDate> employeeAssignedDates = new HashMap<>();
 
     public ProjectEntity(String designation, Long responsibleEmployeeId, Long customerId,
                         String customerContactPerson, String comment, LocalDate startDate,

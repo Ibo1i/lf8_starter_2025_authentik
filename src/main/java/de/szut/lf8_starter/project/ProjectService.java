@@ -4,6 +4,7 @@ import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeNotFoundException;
 import de.szut.lf8_starter.exceptionHandling.EmployeeQualificationException;
 import de.szut.lf8_starter.exceptionHandling.TimeConflictException;
+import de.szut.lf8_starter.exceptionHandling.DuplicateAssignmentException;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.dto.ProjectEmployeesDto;
@@ -92,6 +93,13 @@ public class ProjectService {
     public ProjectEntity addEmployeeToProject(Long projectId, Long employeeId, String qualification) {
         ProjectEntity project = readById(projectId);
 
+        // Prüfung auf bestehende Zuweisung vor weiteren Validierungen
+        if (project.getEmployeeIds() != null && project.getEmployeeIds().contains(employeeId)) {
+            LocalDate assigned = project.getEmployeeAssignedDates() != null ? project.getEmployeeAssignedDates().get(employeeId) : null;
+            String role = project.getEmployeeQualifications() != null ? project.getEmployeeQualifications().get(employeeId) : null;
+            throw new DuplicateAssignmentException(projectId, employeeId, assigned, role);
+        }
+
         // Validierung: Mitarbeiter existiert
         if (!employeeService.employeeExists(employeeId)) {
             throw new EmployeeNotFoundException(employeeId);
@@ -126,9 +134,14 @@ public class ProjectService {
         if (project.getEmployeeQualifications() == null) {
             project.setEmployeeQualifications(new java.util.HashMap<>());
         }
+        if (project.getEmployeeAssignedDates() == null) {
+            project.setEmployeeAssignedDates(new java.util.HashMap<>());
+        }
 
         project.getEmployeeIds().add(employeeId);
         project.getEmployeeQualifications().put(employeeId, qualification);
+        // set assigned date to today
+        project.getEmployeeAssignedDates().put(employeeId, LocalDate.now());
 
         return this.repository.save(project);
     }
@@ -148,6 +161,7 @@ public class ProjectService {
         // Mitarbeiter entfernen
         project.getEmployeeIds().remove(employeeId);
         project.getEmployeeQualifications().remove(employeeId);
+        project.getEmployeeAssignedDates().remove(employeeId);
 
         return this.repository.save(project);
     }

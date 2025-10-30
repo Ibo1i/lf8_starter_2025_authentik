@@ -18,5 +18,13 @@ public class ApiErrorResponse {
     private String path;
     private List<ValidationError> validationErrors;
     private List<ConflictingProjectDto> conflictingProjects;
-}
+    private ExistingAssignmentDto existingAssignment;
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public static class ExistingAssignmentDto {
+        private String assignedDate; // ISO date as string
+        private String role;
+    }
+}
