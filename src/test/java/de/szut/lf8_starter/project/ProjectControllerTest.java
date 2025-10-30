@@ -39,6 +39,9 @@ class ProjectControllerTest {
     @MockBean
     private ProjectMapper projectMapper;
 
+    @MockBean
+    private de.szut.lf8_starter.project.service.EmployeeService employeeService;
+
     private ProjectEntity testProject;
     private ProjectGetDto testProjectDto;
 
@@ -70,7 +73,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{id} - Erfolgreiches Abrufen eines existierenden Projekts")
+    @DisplayName("GET /projects/{projectId} - Erfolgreiches Abrufen eines existierenden Projekts")
     void getProjectById_ExistingProject_ReturnsProject() throws Exception {
         // Given
         Long projectId = 1L;
@@ -78,7 +81,7 @@ class ProjectControllerTest {
         when(projectMapper.mapToGetDto(testProject)).thenReturn(testProjectDto);
 
         // When & Then
-        mockMvc.perform(get("/projects/{id}", projectId)
+        mockMvc.perform(get("/projects/{projectId}", projectId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -92,7 +95,7 @@ class ProjectControllerTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{id} - Projekt nicht gefunden - HTTP 404")
+    @DisplayName("GET /projects/{projectId} - Projekt nicht gefunden - HTTP 404")
     void getProjectById_ProjectNotFound_Returns404() throws Exception {
         // Given
         Long nonExistentId = 999L;
@@ -100,13 +103,13 @@ class ProjectControllerTest {
                 .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."));
 
         // When & Then
-        mockMvc.perform(get("/projects/{id}", nonExistentId)
+        mockMvc.perform(get("/projects/{projectId}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("GET /projects/{id} - Ungültige ID (negative Zahl)")
+    @DisplayName("GET /projects/{projectId} - Ungültige ID (negative Zahl)")
     void getProjectById_InvalidNegativeId_ReturnsNotFound() throws Exception {
         // Given
         Long invalidId = -1L;
@@ -114,13 +117,13 @@ class ProjectControllerTest {
                 .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + invalidId + " existiert nicht."));
 
         // When & Then
-        mockMvc.perform(get("/projects/{id}", invalidId)
+        mockMvc.perform(get("/projects/{projectId}", invalidId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("GET /projects/{id} - ID = 0")
+    @DisplayName("GET /projects/{projectId} - ID = 0")
     void getProjectById_ZeroId_ReturnsNotFound() throws Exception {
         // Given
         Long zeroId = 0L;
@@ -128,7 +131,7 @@ class ProjectControllerTest {
                 .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + zeroId + " existiert nicht."));
 
         // When & Then
-        mockMvc.perform(get("/projects/{id}", zeroId)
+        mockMvc.perform(get("/projects/{projectId}", zeroId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -151,34 +154,69 @@ class ProjectControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /projects/{id} - Erfolgreiches Löschen (204)")
+    @DisplayName("DELETE /projects/{projectId} - Erfolgreiches Löschen (204)")
     void deleteProject_ExistingProject_ReturnsNoContent() throws Exception {
         Long projectId = 1L;
         doNothing().when(projectService).deleteById(projectId);
 
-        mockMvc.perform(delete("/projects/{id}", projectId).with(csrf()).with(user("test").roles("USER")))
+        mockMvc.perform(delete("/projects/{projectId}", projectId).with(csrf()).with(user("test").roles("USER")))
                 .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("DELETE /projects/{id} - Projekt nicht gefunden (404)")
+    @DisplayName("DELETE /projects/{projectId} - Projekt nicht gefunden (404)")
     void deleteProject_NotFound_ReturnsNotFound() throws Exception {
         Long nonExistentId = 999L;
         doThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."))
                 .when(projectService).deleteById(nonExistentId);
 
-        mockMvc.perform(delete("/projects/{id}", nonExistentId).with(csrf()).with(user("test").roles("USER")))
+        mockMvc.perform(delete("/projects/{projectId}", nonExistentId).with(csrf()).with(user("test").roles("USER")))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("DELETE /projects/{id} - Konflikt bei Mitarbeiterzuordnungen (409)")
+    @DisplayName("DELETE /projects/{projectId} - Konflikt bei Mitarbeiterzuordnungen (409)")
     void deleteProject_Conflict_ReturnsConflict() throws Exception {
         Long id = 2L;
         doThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT))
                 .when(projectService).deleteById(id);
 
-        mockMvc.perform(delete("/projects/{id}", id).with(csrf()).with(user("test").roles("USER")))
+        mockMvc.perform(delete("/projects/{projectId}", id).with(csrf()).with(user("test").roles("USER")))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("GET /projects/{projektId}/employees - Erfolgreiches Abrufen der Projektmitarbeiter")
+    void getProjectEmployees_ExistingProject_ReturnsEmployees() throws Exception {
+        Long projectId = 1L;
+        // DTO vorbereiten
+        de.szut.lf8_starter.project.dto.ProjectEmployeesDto employeesDto = new de.szut.lf8_starter.project.dto.ProjectEmployeesDto(
+            1L,
+            "Test Projekt",
+            java.util.List.of(new de.szut.lf8_starter.project.dto.ProjectEmployeesDto.EmployeeWithQualificationDto(10L, "Developer"))
+        );
+
+        when(projectService.getProjectEmployees(projectId)).thenReturn(employeesDto);
+
+        mockMvc.perform(get("/projects/{projektId}/employees", projectId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.projectId").value(1))
+                .andExpect(jsonPath("$.designation").value("Test Projekt"))
+                .andExpect(jsonPath("$.employees[0].employeeId").value(10))
+                .andExpect(jsonPath("$.employees[0].qualification").value("Developer"));
+    }
+
+    @Test
+    @DisplayName("GET /projects/{projektId}/employees - Projekt nicht gefunden - HTTP 404")
+    void getProjectEmployees_ProjectNotFound_Returns404() throws Exception {
+        Long nonExistentId = 999L;
+        when(projectService.getProjectEmployees(nonExistentId))
+                .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."));
+
+        mockMvc.perform(get("/projects/{projektId}/employees", nonExistentId)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

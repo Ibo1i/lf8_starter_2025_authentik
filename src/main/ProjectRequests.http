@@ -56,3 +56,8 @@ Content-Type: application/json
 ### Mitarbeiter von einem Projekt entfernen
 DELETE http://localhost:8080/projects/1/employees/1
 Content-Type: application/json
+
+
+### Mitarbeiterliste eines Projekts abrufen
+GET http://localhost:8080/projects/1/employees
+Content-Type: application/json

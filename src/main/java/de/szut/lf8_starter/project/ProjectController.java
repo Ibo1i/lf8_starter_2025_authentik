@@ -65,7 +65,7 @@ public class ProjectController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{projectId}")
     @Operation(summary = "Get a project by ID")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Project found successfully",
@@ -76,11 +76,11 @@ public class ProjectController {
         @ApiResponse(responseCode = "401", description = "Unauthorized",
             content = @Content)
     })
-    public ProjectGetDto getProjectById(@PathVariable Long id) {
+    public ProjectGetDto getProjectById(@PathVariable("projectId") Long id) {
         ProjectEntity projectEntity = this.projectService.readById(id);
         return this.projectMapper.mapToGetDto(projectEntity);
     }
-    @PutMapping("/{id}")
+    @PutMapping("/{projectId}")
     @Operation(summary = "Update an existing project")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Project updated successfully",
@@ -94,14 +94,14 @@ public class ProjectController {
                     content = @Content)
     })
     public ProjectGetDto updateProject(
-            @PathVariable Long id,
+            @PathVariable("projectId") Long id,
             @RequestBody @Valid de.szut.lf8_starter.dto.UpdateProjectDTO updateDTO
     ) {
         ProjectEntity updatedProject = this.projectService.updateFromDTO(id, updateDTO);
         return this.projectMapper.mapToGetDto(updatedProject);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{projectId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a project by ID")
     @ApiResponses(value = {
@@ -109,7 +109,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found", content = @Content),
             @ApiResponse(responseCode = "409", description = "Project has employee assignments and cannot be deleted", content = @Content)
     })
-    public void deleteProject(@PathVariable Long id) {
+    public void deleteProject(@PathVariable("projectId") Long id) {
         this.projectService.deleteById(id);
     }
 
@@ -155,5 +155,18 @@ public class ProjectController {
         body.put("projectId", projectId);
         body.put("employeeId", employeeId);
         return body;
+    }
+
+    @GetMapping("/{projectId}/employees")
+    @Operation(summary = "Get all employees assigned to a project")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Employees returned successfully",
+            content = @Content(mediaType = "application/json",
+                schema = @Schema(implementation = de.szut.lf8_starter.project.dto.ProjectEmployeesDto.class))),
+        @ApiResponse(responseCode = "404", description = "Project not found", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+    })
+    public de.szut.lf8_starter.project.dto.ProjectEmployeesDto getProjectEmployees(@PathVariable("projectId") Long id) {
+        return this.projectService.getProjectEmployees(id);
     }
 }

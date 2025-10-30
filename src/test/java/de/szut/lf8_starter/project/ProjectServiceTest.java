@@ -155,4 +155,39 @@ class ProjectServiceTest {
         ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> projectService.deleteById(id));
         assertEquals(org.springframework.http.HttpStatus.CONFLICT, ex.getStatusCode());
     }
+
+    @Test
+    @DisplayName("getProjectEmployees - Erfolgreiches Abrufen der Mitarbeiter eines Projekts")
+    void getProjectEmployees_ExistingProject_ReturnsEmployeesDto() {
+        // Given
+        Long projectId = 1L;
+        testProject.getEmployeeIds().add(10L);
+        testProject.getEmployeeQualifications().put(10L, "Developer");
+
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(testProject));
+
+        // When
+        de.szut.lf8_starter.project.dto.ProjectEmployeesDto dto = projectService.getProjectEmployees(projectId);
+
+        // Then
+        assertNotNull(dto);
+        assertEquals(projectId, dto.getProjectId());
+        assertEquals(testProject.getDesignation(), dto.getDesignation());
+        assertNotNull(dto.getEmployees());
+        assertEquals(1, dto.getEmployees().size());
+        assertEquals(10L, dto.getEmployees().get(0).getEmployeeId());
+        assertEquals("Developer", dto.getEmployees().get(0).getQualification());
+    }
+
+    @Test
+    @DisplayName("getProjectEmployees - Projekt nicht gefunden - wirft ResourceNotFoundException")
+    void getProjectEmployees_ProjectNotFound_ThrowsResourceNotFoundException() {
+        // Given
+        Long nonExistentId = 999L;
+        when(projectRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        // When & Then
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class, () -> projectService.getProjectEmployees(nonExistentId));
+        assertEquals("Projekt mit der ID " + nonExistentId + " existiert nicht.", ex.getMessage());
+    }
 }
