@@ -15,6 +15,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.http.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 @EnableWebSecurity
@@ -39,14 +43,35 @@ public class AuthentikSecurityConfig {
                         .jwt(jwt -> {
 
                         })
+                        .authenticationEntryPoint(authenticationEntryPoint())
                 )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/hello").authenticated()
                         .requestMatchers("/hello/**").authenticated()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(401);
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            de.szut.lf8_starter.project.dto.ApiErrorResponse errorResponse = new de.szut.lf8_starter.project.dto.ApiErrorResponse(
+                java.time.LocalDateTime.now(),
+                401,
+                "Unauthorized",
+                "JWT-Token ist ungültig oder fehlt.",
+                request.getRequestURI(),
+                null,
+                null
+            );
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        };
     }
 
     @Bean

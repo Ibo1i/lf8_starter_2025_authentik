@@ -135,4 +135,25 @@ public class ProjectController {
 
         return new EmployeeAssignmentResponseDto(updated.getId(), updated.getDesignation(), request.getEmployeeId(), employeeName);
     }
+
+    @DeleteMapping("/{projectId}/employees/{employeeId}")
+    @Operation(summary = "Remove an employee from a project")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Employee removed successfully",
+            content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "400", description = "Ungültiges Format der Mitarbeiternummer", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Project or assignment not found", content = @Content)
+    })
+    public java.util.Map<String, Object> removeEmployeeFromProject(
+            @PathVariable Long projectId,
+            @PathVariable Long employeeId
+    ) {
+        this.projectService.removeEmployeeFromProject(projectId, employeeId);
+        java.util.Map<String, Object> body = new java.util.HashMap<>();
+        body.put("message", "Mitarbeiter erfolgreich aus Projekt entfernt.");
+        body.put("projectId", projectId);
+        body.put("employeeId", employeeId);
+        return body;
+    }
 }

@@ -140,9 +140,9 @@ public class ProjectService {
         ProjectEntity project = readById(projectId);
 
         // Prüfen ob Mitarbeiter im Projekt arbeitet
-        if (!project.getEmployeeIds().contains(employeeId)) {
-            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer (\"" + employeeId +
-                "\") arbeitet in dem angegebenen Projekt mit der Projekt-ID (" + projectId + ") nicht");
+        if (project.getEmployeeIds() == null || !project.getEmployeeIds().contains(employeeId)) {
+            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer " + employeeId +
+                " arbeitet in dem Projekt mit der Projekt-ID " + projectId + " nicht.");
         }
 
         // Mitarbeiter entfernen

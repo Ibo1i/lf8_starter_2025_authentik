@@ -51,3 +51,8 @@ Content-Type: application/json
   "employeeId": 1,
   "qualification": "Java"
 }
+
+
+### Mitarbeiter von einem Projekt entfernen
+DELETE http://localhost:8080/projects/1/employees/1
+Content-Type: application/json
