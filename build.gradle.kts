@@ -34,11 +34,10 @@ dependencies {
         exclude(group = "net.minidev", module = "json-smart")
     }
     implementation("net.minidev:json-smart:2.5.2")
+    implementation("net.minidev:accessors-smart:2.5.2")
     runtimeOnly("org.postgresql:postgresql")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0") {
-        exclude(group = "org.apache.commons", module = "commons-lang3")
-    }
-    implementation("org.apache.commons:commons-lang3:3.15.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
     implementation("org.apache.commons:commons-compress:1.27.0")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:testcontainers:1.20.2")
@@ -47,11 +46,8 @@ dependencies {
 }
 
 configurations.all {
-    exclude(group = "net.minidev", module = "json-smart")
-    exclude(group = "org.apache.commons", module = "commons-lang3")
-    exclude(group = "org.apache.commons", module = "commons-compress")
     resolutionStrategy {
-        force("org.apache.commons:commons-lang3:3.15.0")
+        force("org.apache.commons:commons-lang3:3.17.0")
         force("org.apache.commons:commons-compress:1.27.0")
     }
 }
