@@ -21,7 +21,6 @@ import java.util.List;
 
 /**
  * Security configuration for JWT authentication using Keycloak/Authentik.
- * Story 4.1: JWT-Authentifizierung implementieren
  *
  * Secures all endpoints except /actuator/health and /swagger-ui/**
  * Requires role 'hitec-employee' for access to protected endpoints.

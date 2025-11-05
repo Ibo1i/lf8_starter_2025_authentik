@@ -4,6 +4,7 @@ import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_starter.project.ProjectEntity;
 import de.szut.lf8_starter.project.ProjectRepository;
 import de.szut.lf8_starter.project.ProjectService;
+import de.szut.lf8_starter.project.dto.ProjectEmployeesDto;
 import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -52,7 +54,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("readById - Erfolgreiches Abrufen eines existierenden Projekts")
+    @DisplayName("readById - Successfully retrieving an existing project")
     void readById_ExistingProject_ReturnsProject() {
         // Given
         Long projectId = 1L;
@@ -73,7 +75,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("readById - Projekt nicht gefunden - wirft ResourceNotFoundException")
+    @DisplayName("readById - Project not found - throws ResourceNotFoundException")
     void readById_ProjectNotFound_ThrowsResourceNotFoundException() {
         // Given
         Long nonExistentId = 999L;
@@ -89,7 +91,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("readById - Negative ID - wirft ResourceNotFoundException")
+    @DisplayName("readById - Negative ID - throws ResourceNotFoundException")
     void readById_NegativeId_ThrowsResourceNotFoundException() {
         // Given
         Long negativeId = -1L;
@@ -105,7 +107,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("readById - ID = 0 - wirft ResourceNotFoundException")
+    @DisplayName("readById - ID = 0 - throws ResourceNotFoundException")
     void readById_ZeroId_ThrowsResourceNotFoundException() {
         // Given
         Long zeroId = 0L;
@@ -121,7 +123,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("deleteById - Erfolgreiches Löschen")
+    @DisplayName("deleteById - Successful deletion")
     void deleteById_ExistingProject_Success() {
         // Given
         Long id = 1L;
@@ -136,7 +138,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("deleteById - Projekt nicht gefunden - wirft ResourceNotFoundException")
+    @DisplayName("deleteById - Project not found - throws ResourceNotFoundException")
     void deleteById_NotFound_ThrowsResourceNotFoundException() {
         Long id = 999L;
         when(projectRepository.findById(id)).thenReturn(Optional.empty());
@@ -146,7 +148,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("deleteById - Konflikt bei Mitarbeiterzuordnungen - wirft ResponseStatusException CONFLICT")
+    @DisplayName("deleteById - Conflict in employee assignments - throws ResponseStatusException CONFLICT")
     void deleteById_Conflict_ThrowsResponseStatusException() {
         Long id = 2L;
         ProjectEntity projectWithEmployees = new ProjectEntity();
@@ -156,11 +158,11 @@ class ProjectServiceUnitTest {
         when(projectRepository.findById(id)).thenReturn(Optional.of(projectWithEmployees));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> projectService.deleteById(id));
-        assertEquals(org.springframework.http.HttpStatus.CONFLICT, ex.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
     }
 
     @Test
-    @DisplayName("getProjectEmployees - Erfolgreiches Abrufen der Mitarbeiter eines Projekts")
+    @DisplayName("getProjectEmployees - Successfully retrieving the employees assigned to a project")
     void getProjectEmployees_ExistingProject_ReturnsEmployeesDto() {
         // Given
         Long projectId = 1L;
@@ -170,7 +172,7 @@ class ProjectServiceUnitTest {
         when(projectRepository.findById(projectId)).thenReturn(Optional.of(testProject));
 
         // When
-        de.szut.lf8_starter.project.dto.ProjectEmployeesDto dto = projectService.getProjectEmployees(projectId);
+        ProjectEmployeesDto dto = projectService.getProjectEmployees(projectId);
 
         // Then
         assertNotNull(dto);
@@ -183,7 +185,7 @@ class ProjectServiceUnitTest {
     }
 
     @Test
-    @DisplayName("getProjectEmployees - Projekt nicht gefunden - wirft ResourceNotFoundException")
+    @DisplayName("getProjectEmployees - Project not found - throws ResourceNotFoundException")
     void getProjectEmployees_ProjectNotFound_ThrowsResourceNotFoundException() {
         // Given
         Long nonExistentId = 999L;

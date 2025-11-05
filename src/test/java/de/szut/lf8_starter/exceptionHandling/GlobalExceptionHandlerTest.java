@@ -42,7 +42,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    @DisplayName("EmployeeNotFoundException - Gibt 404 zurück")
+    @DisplayName("EmployeeNotFoundException - Returns 404")
     void handleEmployeeNotFound_Returns404() {
         // Given
         EmployeeNotFoundException ex = new EmployeeNotFoundException(1L);
@@ -56,11 +56,11 @@ class GlobalExceptionHandlerTest {
         Assertions.assertNotNull(response.getBody());
         assertThat(response.getBody().getStatus()).isEqualTo(404);
         assertThat(response.getBody().getError()).isEqualTo("Not Found");
-        assertThat(response.getBody().getMessage()).isEqualTo("Mitarbeiter mit der Mitarbeiternummer 1 existiert nicht.");
+        assertThat(response.getBody().getMessage()).isEqualTo("Employee with ID 1 does not exist.");
     }
 
     @Test
-    @DisplayName("EmployeeQualificationException - Gibt 422 zurück")
+    @DisplayName("EmployeeQualificationException - Returns 422")
     void handleEmployeeQualification_Returns422() {
         // Given
         EmployeeQualificationException ex = new EmployeeQualificationException("Test qualification error");
@@ -74,11 +74,11 @@ class GlobalExceptionHandlerTest {
         Assertions.assertNotNull(response.getBody());
         assertThat(response.getBody().getStatus()).isEqualTo(422);
         assertThat(response.getBody().getError()).isEqualTo("Unprocessable Entity");
-        assertThat(response.getBody().getMessage()).isEqualTo("Mitarbeiter hat die Qualifikation Test qualification error nicht.");
+        assertThat(response.getBody().getMessage()).isEqualTo("Employee does not have the required qualification: Test qualification error.");
     }
 
     @Test
-    @DisplayName("TimeConflictException - Gibt 409 zurück")
+    @DisplayName("TimeConflictException - Returns 409")
     void handleTimeConflict_Returns409() {
         // Given
         TimeConflictException ex = new TimeConflictException("2025-01-01", "2025-12-31", null);
@@ -92,11 +92,11 @@ class GlobalExceptionHandlerTest {
         Assertions.assertNotNull(response.getBody());
         assertThat(response.getBody().getStatus()).isEqualTo(409);
         assertThat(response.getBody().getError()).isEqualTo("Conflict");
-        assertThat(response.getBody().getMessage()).isEqualTo("Mitarbeiter ist im Zeitraum 2025-01-01 bis 2025-12-31 bereits verplant.");
+        assertThat(response.getBody().getMessage()).isEqualTo("Employee is already assigned to another project during the period 2025-01-01 to 2025-12-31.");
     }
 
     @Test
-    @DisplayName("DuplicateAssignmentException - Gibt 409 zurück")
+    @DisplayName("DuplicateAssignmentException - Returns 409")
     void handleDuplicateAssignment_Returns409() {
         // Given
         DuplicateAssignmentException ex = new DuplicateAssignmentException(1L, 2L, LocalDate.now(), "Developer");
@@ -110,6 +110,6 @@ class GlobalExceptionHandlerTest {
         Assertions.assertNotNull(response.getBody());
         assertThat(response.getBody().getStatus()).isEqualTo(409);
         assertThat(response.getBody().getError()).isEqualTo("Conflict");
-        assertThat(response.getBody().getMessage()).isEqualTo("Mitarbeiter mit der Mitarbeiternummer 2 ist bereits dem Projekt mit der ID 1 zugewiesen.");
+        assertThat(response.getBody().getMessage()).isEqualTo("Employee with ID 2 is already assigned to project with ID 1.");
     }
 }

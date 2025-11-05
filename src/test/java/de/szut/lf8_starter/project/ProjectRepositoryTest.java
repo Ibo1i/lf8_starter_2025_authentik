@@ -17,9 +17,9 @@ class ProjectRepositoryTest {
     private ProjectRepository repository;
 
     @Test
-    void sollProjektSpeichernUndLaden() {
-        // Given - Projekt erstellen
-        ProjectEntity projekt = new ProjectEntity(
+    void shouldSaveAndLoadProject() {
+        // Given - Create project
+        ProjectEntity project = new ProjectEntity(
                 "Test Webshop",
                 1L,
                 1L,
@@ -29,29 +29,29 @@ class ProjectRepositoryTest {
                 LocalDate.now().plusDays(30)
         );
 
-        // When - Speichern
-        ProjectEntity gespeichert = repository.save(projekt);
+        // When - Save
+        ProjectEntity saved = repository.save(project);
 
-        // Then - Prüfen
-        assertThat(gespeichert.getId()).isNotNull();
-        assertThat(gespeichert.getDesignation()).isEqualTo("Test Webshop");
+        // Then - Check
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getDesignation()).isEqualTo("Test Webshop");
 
-        // Nochmal laden und prüfen
-        Optional<ProjectEntity> geladen = repository.findById(gespeichert.getId());
-        assertThat(geladen).isPresent();
-        assertThat(geladen.get().getDesignation()).isEqualTo("Test Webshop");
+        // Reload and check again
+        Optional<ProjectEntity> loaded = repository.findById(saved.getId());
+        assertThat(loaded).isPresent();
+        assertThat(loaded.get().getDesignation()).isEqualTo("Test Webshop");
     }
 
     @Test
-    void sollProjekteNachKundenIdFinden() {
-        // Given - Mehrere Projekte für verschiedene Kunden
-        ProjectEntity projekt1 = erstelleTestProjekt("Projekt 1", 1L);
-        ProjectEntity projekt2 = erstelleTestProjekt("Projekt 2", 1L);
-        ProjectEntity projekt3 = erstelleTestProjekt("Projekt 3", 2L);
+    void findProjectsByCustomerId() {
+        // Given - Several projects for various clients
+        ProjectEntity project1 = erstelleTestProjekt("Projekt 1", 1L);
+        ProjectEntity project2 = erstelleTestProjekt("Projekt 2", 1L);
+        ProjectEntity project3 = erstelleTestProjekt("Projekt 3", 2L);
 
-        repository.save(projekt1);
-        repository.save(projekt2);
-        repository.save(projekt3);
+        repository.save(project1);
+        repository.save(project2);
+        repository.save(project3);
 
         // When - Suche nach Kunde 1
         List<ProjectEntity> projekte = repository.findByCustomerId(1L);
@@ -64,7 +64,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void sollProjekteNachVerantwortlichemFinden() {
+    void FindProjectsByPersonResponsible() {
         // Given
         ProjectEntity projekt1 = erstelleTestProjektMitVerantwortlichem("Projekt A", 10L);
         ProjectEntity projekt2 = erstelleTestProjektMitVerantwortlichem("Projekt B", 10L);
@@ -84,17 +84,17 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    void sollProjektNachBezeichnungFinden() {
+    void FindProjectByName() {
         // Given
-        ProjectEntity projekt = erstelleTestProjekt("Eindeutiger Name", 1L);
-        repository.save(projekt);
+        ProjectEntity project = erstelleTestProjekt("Eindeutiger Name", 1L);
+        repository.save(project);
 
         // When
-        Optional<ProjectEntity> gefunden = repository.findByDesignation("Eindeutiger Name");
+        Optional<ProjectEntity> found = repository.findByDesignation("Eindeutiger Name");
 
         // Then
-        assertThat(gefunden).isPresent();
-        assertThat(gefunden.get().getDesignation()).isEqualTo("Eindeutiger Name");
+        assertThat(found).isPresent();
+        assertThat(found.get().getDesignation()).isEqualTo("Eindeutiger Name");
     }
 
     @Test

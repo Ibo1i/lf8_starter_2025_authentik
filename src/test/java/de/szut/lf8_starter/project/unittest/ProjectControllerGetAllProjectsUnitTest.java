@@ -70,7 +70,7 @@ class ProjectControllerGetAllProjectsUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects - Alle Projekte abrufen")
+    @DisplayName("GET /projects - View all projects")
     void getAllProjects_ReturnsListOfProjects() throws Exception {
         List<ProjectEntity> projects = List.of(testProject);
         when(projectService.readAll()).thenReturn(projects);

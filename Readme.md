@@ -1,34 +1,34 @@
-# Starter für das LF08 Projekt - Project Management Service
+# LF08 Project Starter - Project Management Service
 
-Dieses Projekt implementiert einen **Project Management Service** mit folgenden Features:
-- ✅ JWT-Authentifizierung (Keycloak)
-- ✅ Employee-Service Integration mit Circuit Breaker
-- ✅ PostgreSQL Datenbank
-- ✅ RESTful API mit OpenAPI/Swagger
-- ✅ Resilience4j für Fehlertoleranz
+This project implements a **Project Management Service** with the following features:
+- ✅ JWT Authentication (Keycloak)
+- ✅ Employee Service Integration with Circuit Breaker
+- ✅ PostgreSQL Database
+- ✅ RESTful API with OpenAPI/Swagger
+- ✅ Resilience4j for Fault Tolerance
 
-## 🚀 Schnellstart
+## 🚀 Quick Start
 
-### Voraussetzungen
+### Prerequisites
 * Docker: https://docs.docker.com/get-docker/
-* Docker Compose (bei Windows und Mac in Docker enthalten): https://docs.docker.com/compose/install/
+* Docker Compose (included with Docker Desktop on Windows and Mac): https://docs.docker.com/compose/install/
 
-### Alle Services starten
+### Start All Services
 
 ```bash
 docker compose up
 ```
 
-**Das startet automatisch:**
-1. ✅ PostgreSQL Datenbank (Port 5432)
+**This automatically starts:**
+1. ✅ PostgreSQL Database (Port 5432)
 2. ✅ Keycloak (Port 9090)
-3. ✅ Employee-Service Mock (WireMock auf Port 8081)
+3. ✅ Employee Service Mock (WireMock on Port 8081)
 
-**⏱️ Wartezeit:** ~60 Sekunden bis Keycloak vollständig gestartet ist.
+**⏱️ Wait time:** ~60 seconds until Keycloak is fully started.
 
-### Anwendung starten
+### Start the Application
 
-**Option A: Mit Gradle (lokal entwickeln)**
+**Option A: With Gradle (local development)**
 ```bash
 # Windows
 .\gradlew.bat bootRun
@@ -37,31 +37,31 @@ docker compose up
 ./gradlew bootRun
 ```
 
-**Option B: Mit Docker (wie in Produktion)**
+**Option B: With Docker (like in production)**
 ```bash
-# TODO: Dockerfile erstellen falls gewünscht
+# TODO: Create Dockerfile if desired
 ```
 
-## 📍 Wichtige Endpunkte
+## 📍 Important Endpoints
 
-| Service | URL | Beschreibung |
-|---------|-----|--------------|
+| Service | URL | Description |
+|---------|-----|-------------|
 | **API** | http://localhost:8080 | Project Management Service |
-| **Swagger UI** | http://localhost:8080/swagger | API-Dokumentation |
+| **Swagger UI** | http://localhost:8080/swagger-ui/index.html | API Documentation |
 | **Keycloak Admin** | http://localhost:9090 | Admin: `admin` / `admin` |
-| **Employee-Service Mock** | http://localhost:8081 | WireMock Mock-Service |
+| **Employee Service Mock** | http://localhost:8081 | WireMock Mock Service |
 | **PostgreSQL** | localhost:5432 | DB: `lf8Starter`, User: `user`, PW: `secret` |
 
-## 🔐 Authentifizierung
+## 🔐 Authentication
 
-### JWT Token holen
+### Get JWT Token
 
-1. Datei öffnen: `GetBearerToken.http`
-2. Request ausführen (grüner Pfeil in IntelliJ)
-3. `access_token` aus Response kopieren
-4. Token in weitere Requests einfügen: `Authorization: Bearer <token>`
+1. Open file: `GetBearerToken.http`
+2. Execute request (green arrow in IntelliJ)
+3. Copy `access_token` from response
+4. Insert token in further requests: `Authorization: Bearer <token>`
 
-**Oder direkt per cURL:**
+**Or directly via cURL:**
 ```bash
 curl -X POST http://localhost:9090/realms/hitec-realm/protocol/openid-connect/token \
   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -70,39 +70,39 @@ curl -X POST http://localhost:9090/realms/hitec-realm/protocol/openid-connect/to
   -d "grant_type=client_credentials"
 ```
 
-## 🧪 API Testen
+## 🧪 API Testing
 
-### Mit HTTP-Dateien (IntelliJ)
+### With HTTP Files (IntelliJ)
 
-Alle Requests vorbereitet in: `src/main/ProjectRequests.http`
+All requests prepared in: `src/main/ProjectRequests.http`
 
-**Ablauf:**
-1. Token holen (siehe oben)
-2. Projekt erstellen: `POST /projects`
-3. Mitarbeiter zuweisen: `POST /projects/{id}/employees`
+**Workflow:**
+1. Get token (see above)
+2. Create project: `POST /projects`
+3. Assign employee: `POST /projects/{id}/employees`
 
-### Mit Swagger UI
+### With Swagger UI
 
-1. Öffne http://localhost:8080/swagger
-2. Klicke auf "Authorize"
-3. Token einfügen: `Bearer <dein-token>`
-4. Requests ausführen
+1. Open http://localhost:8080/swagger-ui/index.html
+2. Click "Authorize"
+3. Insert token: `Bearer <your-token>`
+4. Execute requests
 
-## 👨‍💼 Employee-Service Mock
+## 👨‍💼 Employee Service Mock
 
-Der Employee-Service wird durch **WireMock** simuliert.
+The Employee Service is simulated through **WireMock**.
 
-### Verfügbare Mock-Endpoints
+### Available Mock Endpoints
 
 ```
 GET /employees/E-{id}
-→ Gibt Mitarbeiter-Details zurück
+→ Returns employee details
 
 GET /employees/E-{id}/qualifications  
-→ Gibt Qualifikationen zurück
+→ Returns qualifications
 ```
 
-### Beispiel-Antworten
+### Example Responses
 
 **Employee:**
 ```json
@@ -129,50 +129,48 @@ GET /employees/E-{id}/qualifications
 }
 ```
 
-### Mock-Konfiguration anpassen
+### Customize Mock Configuration
 
-Mock-Daten befinden sich in:
+Mock data is located in:
 - `wiremock/mappings/*.json` - Request/Response Mappings
 - `wiremock/__files/*.json` - Response Bodies (optional)
 
-## 🗄️ Datenbank
+## 🗄️ Database
 
-## 🗄️ Datenbank
-
-### Services starten
+### Start Services
 ```bash
 docker compose up
 ```
-**Hinweis:** Container laufen dauerhaft! Stoppen wenn nicht benötigt.
+**Note:** Containers run permanently! Stop when not needed.
 
-### Services stoppen
+### Stop Services
 ```bash
 docker compose down
 ```
 
-### Datenbank zurücksetzen (bei Problemen)
+### Reset Database (in case of problems)
 ```bash
 docker compose down
 docker volume rm lf8_starter_2025_authentik_lf8Starter_postgres_data
 docker compose up
 ```
 
-### PostgreSQL in IntelliJ einrichten
+### Set up PostgreSQL in IntelliJ
 
-1. Docker-Container mit PostgreSQL starten
-2. `src/main/resources/application.yml` öffnen und DB-URL kopieren
-3. Rechts: **Database** Reiter öffnen
-4. Auf Datenbanksymbol mit Schlüssel klicken
+1. Start Docker container with PostgreSQL
+2. Open `src/main/resources/application.yml` and copy DB URL
+3. On the right: Open **Database** tab
+4. Click on database symbol with key
 5. **+** → **Data Source from URL**
-6. URL einfügen: `jdbc:postgresql://localhost:5432/lf8Starter`
-7. PostgreSQL-Treiber auswählen → **OK**
+6. Paste URL: `jdbc:postgresql://localhost:5432/lf8Starter`
+7. Select PostgreSQL driver → **OK**
 8. Username: `user`, Password: `secret` → **Apply**
-9. **Schemas** Tab: Nur `lf8_starter_db` und `public` aktivieren
+9. **Schemas** tab: Only activate `lf8_starter_db` and `public`
 10. **Apply** → **OK**
 
-## 🔧 Entwicklung
+## 🔧 Development
 
-### Projekt bauen
+### Build Project
 ```bash
 # Windows
 .\gradlew.bat build
@@ -181,107 +179,109 @@ docker compose up
 ./gradlew build
 ```
 
-### Tests ausführen
+### Run Tests
 ```bash
-# Alle Tests
+# All tests
 .\gradlew.bat test
 
-# Spezifischer Test
+# Specific test
 .\gradlew.bat test --tests "*CircuitBreakerIntegrationTest"
 ```
 
-### Code-Struktur
+### Code Structure
 
 ```
 src/
 ├── main/
 │   ├── java/de/szut/lf8_starter/
-│   │   ├── project/              # Projekt-Management Domain
-│   │   ├── integration/employee/ # Employee-Service Integration
+│   │   ├── project/              # Project Management Domain
+│   │   ├── integration/employee/ # Employee Service Integration
 │   │   ├── security/             # JWT & Keycloak Config
-│   │   └── exceptionHandling/    # Globale Exception Handler
+│   │   ├── exceptionHandling/    # Global Exception Handling
+│   │   └── config/               # Spring Configuration
 │   └── resources/
-│       ├── application.yml       # Hauptkonfiguration
-│       └── application-local.yml # Lokale Entwicklung
-└── test/                         # Unit & Integration Tests
+│       ├── application.yml       # Main Configuration
+│       └── application.properties
+└── test/
+    └── java/de/szut/lf8_starter/
+        ├── integration/          # Integration Tests
+        ├── unittest/             # Unit Tests
+        └── hello/                # Example Tests
 ```
 
-## 📚 User Stories & Features
+## 📚 Documentation
 
-### ✅ Story 4.1: JWT-Authentifizierung
-- Keycloak Integration
-- Bearer Token für alle Endpoints
-- Rolle: `hitec-employee` erforderlich
+- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
+- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
+- **Keycloak Setup**: See `KEYCLOAK_SETUP_GUIDE.md`
+- **WireMock Guide**: See `WIREMOCK_10_EMPLOYEES.md`
 
-### ✅ Story 4.2: Employee-Service Integration
-- OpenFeign Client
-- Circuit Breaker (Resilience4j)
-- Retry-Mechanismus
-- Timeout: 3 Sekunden
-- Fehlerbehandlung für alle Szenarien:
-  - 404: Mitarbeiter nicht gefunden
-  - 422: Qualifikation fehlt/abgelaufen
-  - 502: Service Error
-  - 503: Circuit Breaker offen
-  - 504: Timeout
+## 🛠️ Technologies
 
-## 🛡️ Circuit Breaker
+- **Java 22**
+- **Spring Boot 3.3.4**
+- **Spring Security** with JWT
+- **Spring Data JPA**
+- **PostgreSQL**
+- **Keycloak** for Authentication
+- **Resilience4j** for Circuit Breaker
+- **OpenFeign** for HTTP Clients
+- **WireMock** for Testing
+- **SpringDoc OpenAPI** for API Documentation
 
-Der Circuit Breaker schützt vor Employee-Service Ausfällen:
+## 🔒 Security
 
-| Parameter | Wert |
-|-----------|------|
-| Failure Rate Threshold | 50% |
-| Slow Call Duration | 3 Sekunden |
-| Sliding Window Size | 10 Requests |
-| Wait Duration (Open) | 60 Sekunden |
-| Permitted Calls (Half-Open) | 3 |
+All endpoints require JWT authentication except:
+- `/welcome` - Health check
+- `/swagger-ui/**` - API Documentation
+- `/v3/api-docs/**` - OpenAPI Specification
 
-**Status prüfen:**
-```
-http://localhost:8080/actuator/circuitbreakers
-```
+**Required Role:** `hitec-employee`
 
-## 📖 Weitere Dokumentation
+## 🚨 Troubleshooting
 
-- `EMPLOYEE_SERVICE_INTEGRATION.md` - Employee-Service Details
-- `EMPLOYEE_SERVICE_MOCK_SETUP.md` - Mock-Service Setup
-- `KEYCLOAK_SETUP_ANLEITUNG.md` - Keycloak Konfiguration
-- `src/main/ProjectRequests.http` - Beispiel-Requests
-
-## ❓ Troubleshooting
-
-### "employee-service executing GET http://employee-service:8080"
-→ **Lösung:** WireMock Mock-Service läuft nicht
+### Keycloak doesn't start
 ```bash
-docker compose up employee-service
+docker compose down
+docker compose up
+# Wait for "Keycloak started"
 ```
 
-### "JWT-Token ist ungültig oder abgelaufen"
-→ **Lösung:** Neuen Token holen (siehe Authentifizierung)
-
-### Keycloak startet nicht
-→ **Lösung:** Länger warten (~60 Sekunden) oder Logs prüfen:
+### Database connection error
 ```bash
-docker logs hitec-keycloak
+# Check if PostgreSQL is running
+docker ps | findstr postgres
+
+# Restart database
+docker compose restart postgres
 ```
 
-### Datenbank-Verbindungsfehler
-→ **Lösung:** PostgreSQL läuft nicht:
+### Tests fail
 ```bash
-docker compose up postgres-employee
+# Clean and rebuild
+.\gradlew.bat clean build
+
+# Run specific test with debug output
+.\gradlew.bat test --tests "*YourTest" --info
 ```
 
-## 👥 Mitwirkende
+### Circuit Breaker always OPEN
+- Check WireMock is running: http://localhost:8081/__admin/
+- Verify employee service URL in `application.yml`
+- Check circuit breaker settings in `application.yml`
 
-- Entwickelt für LF8 Schulprojekt
-- Technologie-Stack: Spring Boot 3, Java 17, PostgreSQL, Keycloak, WireMock
+## 📝 License
 
-## 📄 Lizenz
+This project is for educational purposes (LF08 - Application Development).
 
-Schulprojekt - Keine kommerzielle Nutzung
+## 👥 Contributors
 
----
+Developed by students and teachers at SZ Utbremen.
 
-**Viel Erfolg! 🚀**
+## 🔗 Related Links
+
+- [Spring Boot Documentation](https://spring.io/projects/spring-boot)
+- [Keycloak Documentation](https://www.keycloak.org/documentation)
+- [Resilience4j Guide](https://resilience4j.readme.io/)
+- [WireMock Documentation](https://wiremock.org/docs/)
 

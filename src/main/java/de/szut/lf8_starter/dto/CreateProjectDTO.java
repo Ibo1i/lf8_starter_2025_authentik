@@ -9,29 +9,29 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateProjectDTO {
 
-    @NotBlank(message = "Bezeichnung darf nicht leer sein")
-    @Size(min = 3, max = 100, message = "Bezeichnung muss zwischen 3 und 100 Zeichen lang sein")
+    @NotBlank(message = "Designation cannot be blank")
+    @Size(min = 3, max = 100, message = "Designation must be between 3 and 100 characters")
     private String designation;
 
-    @NotNull(message = "Verantwortlicher Mitarbeiter muss angegeben werden")
-    @Positive(message = "Mitarbeiter-ID muss positiv sein")
+    @NotNull(message = "Responsible employee must be specified")
+    @Positive(message = "Employee ID must be positive")
     private Long responsibleEmployeeId;
 
-    @NotNull(message = "Kunde muss angegeben werden")
-    @Positive(message = "Kunden-ID muss positiv sein")
+    @NotNull(message = "Customer must be specified")
+    @Positive(message = "Customer ID must be positive")
     private Long customerId;
 
-    @NotBlank(message = "Kontaktperson muss angegeben werden")
+    @NotBlank(message = "Contact person must be specified")
     private String customerContactPerson;
 
-    @Size(max = 500, message = "Kommentar darf maximal 500 Zeichen haben")
+    @Size(max = 500, message = "Comment cannot exceed 500 characters")
     private String comment;
 
-    @NotNull(message = "Startdatum muss angegeben werden")
-    @FutureOrPresent(message = "Startdatum darf nicht in der Vergangenheit liegen")
+    @NotNull(message = "Start date must be specified")
+    @FutureOrPresent(message = "Start date cannot be in the past")
     private LocalDate startDate;
 
-    @NotNull(message = "Geplantes Enddatum muss angegeben werden")
-    @Future(message = "Enddatum muss in der Zukunft liegen")
+    @NotNull(message = "Planned end date must be specified")
+    @Future(message = "End date must be in the future")
     private LocalDate plannedEndDate;
 }

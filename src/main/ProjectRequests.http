@@ -1,9 +1,5 @@
-### ============================================
-### JWT Token von Keycloak holen (Story 4.1)
-### ============================================
 ### WICHTIG: Führe diesen Request ZUERST aus, um den Token zu bekommen!
 ### Der access_token wird automatisch in der Variable {{auth_token}} gespeichert.
-
 # @name getToken
 POST http://localhost:9090/realms/hitec-realm/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
@@ -18,9 +14,6 @@ client_id=project-management-service
     client.log("✅ Token gespeichert! Gültig für: " + response.body.expires_in + " Sekunden");
 %}
 
-### ============================================
-### PROJEKT-MANAGEMENT ENDPOINTS (mit JWT)
-### ============================================
 
 ### Neues Projekt erstellen
 POST http://localhost:8080/projects

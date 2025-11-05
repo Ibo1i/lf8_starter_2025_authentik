@@ -70,7 +70,7 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
         returned.setDesignation("TestProjekt");
 
         when(projectService.addEmployeeToProject(projectId, employeeId, role)).thenReturn(returned);
-        when(employeeService.getEmployeeName(employeeId)).thenReturn("Mitarbeiter " + employeeId);
+        when(employeeService.getEmployeeName(employeeId)).thenReturn("Employee " + employeeId);
 
         mockMvc.perform(post("/projects/{projectId}/employees", projectId)
                         .with(csrf())
@@ -80,7 +80,7 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
                 .andExpect(jsonPath("$.projectId").value(projectId))
                 .andExpect(jsonPath("$.projectName").value("TestProjekt"))
                 .andExpect(jsonPath("$.employeeId").value(employeeId))
-                .andExpect(jsonPath("$.employeeName").value("Mitarbeiter " + employeeId));
+                .andExpect(jsonPath("$.employeeName").value("Employee " + employeeId));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("$.message").value("Mitarbeiter mit der Mitarbeiternummer " + employeeId + " ist bereits dem Projekt mit der ID " + projectId + " zugewiesen."))
+            .andExpect(jsonPath("$.message").value("Employee with ID " + employeeId + " is already assigned to project with ID " + projectId + "."))
             .andExpect(jsonPath("$.existingAssignment.assignedDate").value("2025-01-15"))
             .andExpect(jsonPath("$.existingAssignment.role").value(role));
     }
@@ -122,7 +122,7 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.message").value("Mitarbeiter mit der Mitarbeiternummer " + employeeId + " existiert nicht."));
+            .andExpect(jsonPath("$.message").value("Employee with ID " + employeeId + " does not exist."));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("$.message").value("Mitarbeiter hat die Qualifikation " + role + " nicht."));
+            .andExpect(jsonPath("$.message").value("Employee does not have the required qualification: " + role + "."));
     }
 
     @Test
@@ -190,14 +190,14 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
 
         EmployeeAssignmentDto request = new EmployeeAssignmentDto(employeeId, role);
         when(projectService.addEmployeeToProject(projectId, employeeId, role))
-            .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + projectId + " existiert nicht."));
+            .thenThrow(new ResourceNotFoundException("Project with ID " + projectId + " does not exist."));
 
         mockMvc.perform(post("/projects/{projectId}/employees", projectId)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.message").value("Projekt mit der ID " + projectId + " existiert nicht."));
+            .andExpect(jsonPath("$.message").value("Project with ID " + projectId + " does not exist."));
     }
 
     @Test
@@ -216,7 +216,7 @@ public class ProjectControllerAssignEmployeeToProjectUnitTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isConflict())
-            .andExpect(jsonPath("$.message").value("Mitarbeiter ist bereits dem Projekt zugewiesen."));
+            .andExpect(jsonPath("$.message").value("Employee is already assigned to the project."));
     }
 
     @Test

@@ -12,7 +12,7 @@ public class TimeConflictException extends ResponseStatusException {
     private final List<ConflictingProjectDto> conflictingProjects;
 
     public TimeConflictException(String startDate, String endDate, List<ConflictingProjectDto> conflictingProjects) {
-        super(HttpStatus.CONFLICT, "Mitarbeiter ist im Zeitraum " + startDate + " bis " + endDate + " bereits verplant.");
+        super(HttpStatus.CONFLICT, "Employee is already assigned to another project during the period " + startDate + " to " + endDate + ".");
         this.conflictingProjects = conflictingProjects;
     }
 

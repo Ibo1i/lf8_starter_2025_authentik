@@ -50,9 +50,9 @@ public class ProjectService {
     }
 
     public ProjectEntity update(ProjectEntity entity) {
-        // Prüfen ob Projekt existiert
+        // Check if project exists
         readById(entity.getId());
-        // Validierung vor dem Update
+        // Validate before update
         validateProject(entity);
         return this.repository.save(entity);
     }
@@ -64,10 +64,10 @@ public class ProjectService {
     public void deleteById(Long id) {
         ProjectEntity project = readById(id);
 
-        // Abhängigkeiten prüfen: dürfen keine Mitarbeiter zugeordnet sein
+        // Check dependencies: no employees should be assigned
         if (project.getEmployeeIds() != null && !project.getEmployeeIds().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                "Projekt hat noch Mitarbeiterzuordnungen und kann nicht gelöscht werden.");
+                "Project still has employee assignments and cannot be deleted.");
         }
 
         this.repository.delete(project);
@@ -86,29 +86,29 @@ public class ProjectService {
     }
 
     /**
-     * Fügt einen Mitarbeiter mit einer bestimmten Qualifikation zu einem Projekt hinzu
+     * Adds an employee with a specific qualification to a project
      */
     public ProjectEntity addEmployeeToProject(Long projectId, Long employeeId, String qualification) {
         ProjectEntity project = readById(projectId);
 
-        // Prüfung auf bestehende Zuweisung vor weiteren Validierungen
+        // Check for existing assignment before further validations
         if (project.getEmployeeIds() != null && project.getEmployeeIds().contains(employeeId)) {
             LocalDate assigned = project.getEmployeeAssignedDates() != null ? project.getEmployeeAssignedDates().get(employeeId) : null;
             String role = project.getEmployeeQualifications() != null ? project.getEmployeeQualifications().get(employeeId) : null;
             throw new DuplicateAssignmentException(projectId, employeeId, assigned, role);
         }
 
-        // Validierung: Mitarbeiter existiert
+        // Validation: Employee exists
         if (!employeeService.employeeExists(employeeId)) {
             throw new EmployeeNotFoundException(employeeId);
         }
 
-        // Validierung: Mitarbeiter hat die erforderliche Qualifikation
+        // Validation: Employee has the required qualification
         if (!employeeService.employeeHasQualification(employeeId, qualification)) {
             throw new EmployeeQualificationException(qualification);
         }
 
-        // Validierung: Zeitkonflikt prüfen
+        // Validation: Check for time conflicts
         List<ProjectEntity> conflicting = repository.findProjectsInTimeRange(project.getStartDate(), project.getPlannedEndDate())
             .stream()
             .filter(p -> !p.getId().equals(projectId) && p.getEmployeeIds().contains(employeeId))
@@ -125,7 +125,7 @@ public class ProjectService {
             throw new TimeConflictException(firstStart, firstEnd, conflictingDtos);
         }
 
-        // Mitarbeiter hinzufügen
+        // Add employee
         if (project.getEmployeeIds() == null) {
             project.setEmployeeIds(new java.util.HashSet<>());
         }
@@ -145,18 +145,18 @@ public class ProjectService {
     }
 
     /**
-     * Entfernt einen Mitarbeiter aus einem Projekt
+     * Removes an employee from a project
      */
     public ProjectEntity removeEmployeeFromProject(Long projectId, Long employeeId) {
         ProjectEntity project = readById(projectId);
 
-        // Prüfen ob Mitarbeiter im Projekt arbeitet
+        // Check if employee works on the project
         if (project.getEmployeeIds() == null || !project.getEmployeeIds().contains(employeeId)) {
             throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer " + employeeId +
                 " arbeitet in dem Projekt mit der Projekt-ID " + projectId + " nicht.");
         }
 
-        // Mitarbeiter entfernen
+        // Remove employee
         project.getEmployeeIds().remove(employeeId);
         project.getEmployeeQualifications().remove(employeeId);
         project.getEmployeeAssignedDates().remove(employeeId);
@@ -165,7 +165,7 @@ public class ProjectService {
     }
 
     /**
-     * Gibt alle Mitarbeiter eines Projekts mit ihren Qualifikationen zurück
+     * Returns all employees of a project with their qualifications
      */
     public ProjectEmployeesDto getProjectEmployees(Long projectId) {
         ProjectEntity project = readById(projectId);
@@ -173,12 +173,12 @@ public class ProjectService {
     }
 
     /**
-     * Gibt alle Projekte eines Mitarbeiters zurück
+     * Returns all projects of an employee
      */
     public EmployeeProjectsDto getEmployeeProjects(Long employeeId) {
-        // Validierung: Mitarbeiter existiert
+        // Validation: Employee exists
         if (!employeeService.employeeExists(employeeId)) {
-            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer " + employeeId + " existiert nicht");
+            throw new ResourceNotFoundException("Employee with ID " + employeeId + " does not exist");
         }
 
         List<ProjectEntity> projects = findProjectsByEmployeeId(employeeId);
@@ -186,7 +186,7 @@ public class ProjectService {
     }
 
     /**
-     * Hilfsmethode für Mapper-Zugriff
+     * Helper method for mapper access
      */
     private ProjectEmployeesDto mapToProjectEmployeesDto(ProjectEntity entity) {
         List<ProjectEmployeesDto.EmployeeWithQualificationDto> employees =
@@ -201,66 +201,66 @@ public class ProjectService {
     }
 
     /**
-     * Hilfsmethode für Mapper-Zugriff
+     * Helper method for mapper access
      */
     private EmployeeProjectsDto mapToEmployeeProjectsDto(Long employeeId, List<ProjectEntity> projects) {
         return getEmployeeProjectsDto(employeeId, projects);
     }
 
     /**
-     * Prüft ob ein Mitarbeiter in einem bestimmten Zeitraum bereits verplant ist
+     * Checks if an employee is already busy in a specific time range
      */
     private boolean isEmployeeBusyInTimeRange(Long employeeId, LocalDate startDate, LocalDate endDate, Long excludeProjectId) {
         List<ProjectEntity> projectsInTimeRange = repository.findProjectsInTimeRange(startDate, endDate);
 
         return projectsInTimeRange.stream()
-            .filter(p -> !p.getId().equals(excludeProjectId)) // Aktuelles Projekt ausschließen
+            .filter(p -> !p.getId().equals(excludeProjectId)) // Exclude current project
             .anyMatch(p -> p.getEmployeeIds().contains(employeeId));
     }
 
     /**
-     * Validiert ein Projekt vor dem Erstellen/Aktualisieren
+     * Validates a project before creating/updating
      */
     private void validateProject(ProjectEntity entity) {
-        // Validierung: Verantwortlicher Mitarbeiter existiert
+        // Validation: Responsible employee exists
         if (!employeeService.employeeExists(entity.getResponsibleEmployeeId())) {
-            throw new ResourceNotFoundException("Mitarbeiter mit der Mitarbeiternummer existiert nicht");
+            throw new ResourceNotFoundException("Employee with employee ID does not exist");
         }
 
-        // Validierung: Kunde existiert (Dummy-Implementierung)
+        // Validation: Customer exists (dummy implementation)
         if (!customerService.customerExists(entity.getCustomerId())) {
-            throw new ResourceNotFoundException("Kunde mit der ID " + entity.getCustomerId() + " existiert nicht.");
+            throw new ResourceNotFoundException("Customer with ID " + entity.getCustomerId() + " does not exist.");
         }
 
-        // Validierung: Start- vor Enddatum
+        // Validation: Start date before end date
         if (entity.getStartDate().isAfter(entity.getPlannedEndDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Startdatum darf nicht nach dem geplanten Enddatum liegen");
+                "Start date cannot be after the planned end date");
         }
 
-        // Validierung: Tatsächliches Enddatum nicht vor Startdatum
+        // Validation: Actual end date not before start date
         if (entity.getActualEndDate() != null && entity.getActualEndDate().isBefore(entity.getStartDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Tatsächliches Enddatum darf nicht vor dem Startdatum liegen");
+                "Actual end date cannot be before the start date");
         }
     }
 
     /**
-     * Aktualisiert ein Projekt mit neuen Daten aus dem DTO
+     * Updates a project with new data from the DTO
      */
     public ProjectEntity updateFromDTO(Long id, de.szut.lf8_starter.dto.UpdateProjectDTO updateDTO) {
-        // Projekt laden
+        // Load project
         ProjectEntity projekt = readById(id);
 
-        // Validierung: Enddatum nach Startdatum
+        // Validation: End date after start date
         if (updateDTO.getPlannedEndDate().isBefore(updateDTO.getStartDate())) {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.BAD_REQUEST,
-                    "Enddatum muss nach dem Startdatum liegen"
+                    "End date must be after the start date"
             );
         }
 
-        // Daten aktualisieren
+        // Update data
         projekt.setDesignation(updateDTO.getDesignation());
         projekt.setResponsibleEmployeeId(updateDTO.getResponsibleEmployeeId());
         projekt.setCustomerId(updateDTO.getCustomerId());
@@ -269,7 +269,7 @@ public class ProjectService {
         projekt.setStartDate(updateDTO.getStartDate());
         projekt.setPlannedEndDate(updateDTO.getPlannedEndDate());
 
-        // Validierung und Speichern
+        // Validate and save
         return update(projekt);
     }
 }

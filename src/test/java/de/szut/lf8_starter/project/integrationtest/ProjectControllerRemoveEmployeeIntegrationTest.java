@@ -54,13 +54,13 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
                         .with(createJwt())
                         .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.message").value("Mitarbeiter erfolgreich aus Projekt entfernt."))
+            .andExpect(jsonPath("$.message").value("Employee successfully removed from project."))
             .andExpect(jsonPath("$.projectId").value(projectId))
             .andExpect(jsonPath("$.employeeId").value(employeeId));
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Projekt nicht gefunden")
+    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Project not found")
     void removeEmployee_ProjectNotFound() throws Exception {
         Long projectId = 999L;
         Long employeeId = 10L;

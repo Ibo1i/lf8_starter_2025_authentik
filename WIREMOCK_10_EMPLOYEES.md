@@ -1,9 +1,9 @@
-# ✅ WireMock - 10 Realistische Mitarbeiter erstellt!
+# ✅ WireMock - 10 Realistic Employees Created!
 
-## 📋 Übersicht aller Mitarbeiter (ID 1-10)
+## 📋 Overview of All Employees (ID 1-10)
 
-| ID | Name | Email | Qualifikationen |
-|----|------|-------|-----------------|
+| ID | Name | Email | Qualifications |
+|----|------|-------|----------------|
 | 1 | Max Mustermann | max.mustermann@hitec.de | Java Senior Developer, Scrum Master |
 | 2 | Anna Schmidt | anna.schmidt@hitec.de | Python Expert, Project Manager |
 | 3 | Thomas Müller | thomas.mueller@hitec.de | DevOps Engineer, Cloud Architect |
@@ -15,7 +15,7 @@
 | 9 | Peter Schröder | peter.schroeder@hitec.de | Full Stack Developer, Scrum Master |
 | 10 | Lisa Zimmermann | lisa.zimmermann@hitec.de | Data Scientist, Machine Learning Engineer |
 
-## 🎯 Details pro Mitarbeiter
+## 🎯 Details per Employee
 
 ### Employee 1 - Max Mustermann
 ```json
@@ -29,9 +29,9 @@ GET /employees/1
 }
 ```
 
-**Qualifikationen**:
-- Java Senior Developer (SENIOR) - gültig bis 2026-12-31
-- Scrum Master (PROFESSIONAL) - gültig bis 2026-06-30
+**Qualifications**:
+- Java Senior Developer (SENIOR) - valid until 2026-12-31
+- Scrum Master (PROFESSIONAL) - valid until 2026-06-30
 
 ---
 
@@ -47,9 +47,9 @@ GET /employees/2
 }
 ```
 
-**Qualifikationen**:
-- Python Expert (EXPERT) - gültig bis 2027-03-31
-- Project Manager (SENIOR) - gültig bis 2026-09-30
+**Qualifications**:
+- Python Expert (EXPERT) - valid until 2027-03-31
+- Project Manager (SENIOR) - valid until 2026-09-30
 
 ---
 
@@ -65,65 +65,167 @@ GET /employees/3
 }
 ```
 
-**Qualifikationen**:
-- DevOps Engineer (SENIOR) - gültig bis 2026-08-15
-- Cloud Architect (PROFESSIONAL) - gültig bis 2027-01-31
+**Qualifications**:
+- DevOps Engineer (SENIOR) - valid until 2026-08-15
+- Cloud Architect (PROFESSIONAL) - valid until 2027-01-31
 
 ---
 
 ### Employee 4 - Sarah Weber
-**Qualifikationen**:
-- Frontend Developer (SENIOR) - gültig bis 2026-11-30
-- UX Designer (PROFESSIONAL) - gültig bis 2026-07-15
+```json
+GET /employees/4
+{
+  "employeeId": 4,
+  "firstName": "Sarah",
+  "lastName": "Weber",
+  "email": "sarah.weber@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Frontend Developer (SENIOR) - valid until 2026-11-30
+- UX Designer (PROFESSIONAL) - valid until 2026-07-15
 
 ---
 
 ### Employee 5 - Michael Fischer
-**Qualifikationen**:
-- Database Administrator (EXPERT) - gültig bis 2027-02-28
-- SQL Developer (SENIOR) - gültig bis 2026-10-31
+```json
+GET /employees/5
+{
+  "employeeId": 5,
+  "firstName": "Michael",
+  "lastName": "Fischer",
+  "email": "michael.fischer@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Database Administrator (EXPERT) - valid until 2027-02-28
+- SQL Developer (SENIOR) - valid until 2026-10-31
 
 ---
 
 ### Employee 6 - Julia Wagner
-**Qualifikationen**:
-- Java Senior Developer (SENIOR) - gültig bis 2026-12-31
-- Agile Coach (PROFESSIONAL) - gültig bis 2027-04-30
+```json
+GET /employees/6
+{
+  "employeeId": 6,
+  "firstName": "Julia",
+  "lastName": "Wagner",
+  "email": "julia.wagner@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Java Senior Developer (SENIOR) - valid until 2026-12-31
+- Agile Coach (PROFESSIONAL) - valid until 2027-04-30
 
 ---
 
 ### Employee 7 - Daniel Becker
-**Qualifikationen**:
-- Security Specialist (EXPERT) - gültig bis 2026-09-30
-- Network Administrator (SENIOR) - gültig bis 2027-01-15
+```json
+GET /employees/7
+{
+  "employeeId": 7,
+  "firstName": "Daniel",
+  "lastName": "Becker",
+  "email": "daniel.becker@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Security Specialist (EXPERT) - valid until 2026-09-30
+- Network Administrator (SENIOR) - valid until 2027-01-15
 
 ---
 
 ### Employee 8 - Laura Hoffmann
-**Qualifikationen**:
-- Project Manager (SENIOR) - gültig bis 2027-05-31
-- Business Analyst (PROFESSIONAL) - gültig bis 2026-08-31
+```json
+GET /employees/8
+{
+  "employeeId": 8,
+  "firstName": "Laura",
+  "lastName": "Hoffmann",
+  "email": "laura.hoffmann@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Project Manager (SENIOR) - valid until 2027-05-31
+- Business Analyst (PROFESSIONAL) - valid until 2026-08-30
 
 ---
 
 ### Employee 9 - Peter Schröder
-**Qualifikationen**:
-- Full Stack Developer (SENIOR) - gültig bis 2026-12-31
-- Scrum Master (PROFESSIONAL) - gültig bis 2027-03-31
+```json
+GET /employees/9
+{
+  "employeeId": 9,
+  "firstName": "Peter",
+  "lastName": "Schröder",
+  "email": "peter.schroeder@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Full Stack Developer (SENIOR) - valid until 2026-12-15
+- Scrum Master (PROFESSIONAL) - valid until 2027-03-31
 
 ---
 
 ### Employee 10 - Lisa Zimmermann
-**Qualifikationen**:
-- Data Scientist (EXPERT) - gültig bis 2027-06-30
-- Machine Learning Engineer (SENIOR) - gültig bis 2026-11-30
+```json
+GET /employees/10
+{
+  "employeeId": 10,
+  "firstName": "Lisa",
+  "lastName": "Zimmermann",
+  "email": "lisa.zimmermann@hitec.de",
+  "status": "ACTIVE"
+}
+```
+
+**Qualifications**:
+- Data Scientist (EXPERT) - valid until 2027-06-30
+- Machine Learning Engineer (SENIOR) - valid until 2026-11-30
 
 ---
 
-## 🧪 Test-Szenarien
+## 🔧 Usage
 
-### ✅ Erfolgreiche Mitarbeiter-Zuweisung
+### Get Employee Details
+```bash
+curl http://localhost:8081/employees/1
+```
 
+### Get Employee Qualifications
+```bash
+curl http://localhost:8081/employees/1/qualifications
+```
+
+### In Your Application
+```java
+// Employee Service will automatically use WireMock
+employeeService.getEmployee(1L);
+employeeService.getQualifications(1L);
+```
+
+## 📂 WireMock Configuration
+
+Mock files are located in:
+- **Mappings**: `wiremock/mappings/get-employee-*.json`
+- **Qualifications**: `wiremock/mappings/get-qualifications-*.json`
+- **Response Bodies**: `wiremock/__files/*.json`
+
+## 🎯 Test Scenarios
+
+### Successful Assignment
 ```http
 POST /projects/1/employees
 {
@@ -131,120 +233,106 @@ POST /projects/1/employees
   "qualification": "Java Senior Developer"
 }
 ```
-**Ergebnis**: ✅ 200 OK - Mitarbeiter 1 (Max Mustermann) wird zugewiesen
+✅ Should work - Employee 1 has this qualification
 
+### Missing Qualification
 ```http
 POST /projects/1/employees
 {
-  "employeeId": 6,
+  "employeeId": 4,
   "qualification": "Java Senior Developer"
 }
 ```
-**Ergebnis**: ✅ 200 OK - Mitarbeiter 6 (Julia Wagner) wird zugewiesen
+❌ Should fail - Employee 4 doesn't have Java skills
 
-### ❌ Fehlerfall: Qualifikation nicht vorhanden
-
+### Not Found
 ```http
 POST /projects/1/employees
-{
-  "employeeId": 2,
-  "qualification": "Java Senior Developer"
-}
-```
-**Ergebnis**: ❌ 422 Unprocessable Entity - Anna Schmidt hat keine Java-Qualifikation (nur Python)
-
-### 🔄 Verschiedene Mitarbeiter, gleiche Qualifikation
-
-**Java Senior Developer** haben:
-- Employee 1 (Max Mustermann)
-- Employee 6 (Julia Wagner)
-
-**Project Manager** haben:
-- Employee 2 (Anna Schmidt)
-- Employee 8 (Laura Hoffmann)
-
-**Scrum Master** haben:
-- Employee 1 (Max Mustermann)
-- Employee 9 (Peter Schröder)
-
-## 🎯 Fallback für unbekannte IDs
-
-Für alle IDs **außer 1-10**:
-
-```json
-GET /employees/999
 {
   "employeeId": 999,
-  "firstName": "Unbekannt",
-  "lastName": "Mitarbeiter",
-  "email": "unknown@hitec.de",
-  "status": "ACTIVE"
+  "qualification": "Any"
 }
 ```
+❌ Should return 404 - Employee doesn't exist
 
-**Qualifikation**: "General Skills" (PROFESSIONAL)
+## 🔄 Circuit Breaker Testing
 
-## 📁 Erstellte Dateien
+The application includes a Circuit Breaker for the Employee Service.
 
-**Employee Mappings** (10 Stück):
-- `wiremock/mappings/get-employee.json` (ID 1)
-- `wiremock/mappings/get-employee-2.json` bis `-10.json`
-- `wiremock/mappings/get-employee-fallback.json`
+### Trigger Circuit Breaker
+1. Make 5 requests to non-existent employee (ID 999)
+2. Circuit Breaker opens after 5 failures
+3. Next requests fail immediately with 503
+4. After 60 seconds, Circuit Breaker transitions to half-open
+5. One successful request closes the Circuit Breaker
 
-**Qualifications Mappings** (10 Stück):
-- `wiremock/mappings/get-qualifications.json` (ID 1)
-- `wiremock/mappings/get-qualifications-2.json` bis `-10.json`
-- `wiremock/mappings/get-qualifications-fallback.json`
+### Monitor Circuit Breaker
+```bash
+curl http://localhost:8080/actuator/circuitbreakers
+curl http://localhost:8080/actuator/circuitbreakerevents
+```
 
-**Gesamt**: 22 Mapping-Dateien
+## 🚀 Quick Test
 
-## ✅ Tests bestätigt
+Test all employees with valid qualifications:
 
 ```bash
-# Employee 1
-curl http://localhost:7070/employees/1
-→ Max Mustermann ✅
+# Employee 1 - Java Developer
+curl -X POST http://localhost:8080/projects/1/employees \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId": 1, "qualification": "Java Senior Developer"}'
 
-# Employee 5
-curl http://localhost:7070/employees/5
-→ Michael Fischer ✅
+# Employee 2 - Python Expert  
+curl -X POST http://localhost:8080/projects/1/employees \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId": 2, "qualification": "Python Expert"}'
 
-# Employee 10
-curl http://localhost:7070/employees/10
-→ Lisa Zimmermann ✅
-
-# Qualifications
-curl http://localhost:7070/employees/3/qualifications
-→ DevOps Engineer, Cloud Architect ✅
+# Employee 3 - DevOps Engineer
+curl -X POST http://localhost:8080/projects/1/employees \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId": 3, "qualification": "DevOps Engineer"}'
 ```
 
-## 🚀 Vorteile
+## 📊 Statistics
 
-✅ **Realistisch**: Jeder Mitarbeiter hat eigene Daten
-✅ **Testbar**: Verschiedene Qualifikationen für verschiedene Szenarien
-✅ **Demo-Ready**: Perfekt für Präsentationen
-✅ **Fehlerfrei**: Alle Mitarbeiter sind ACTIVE und haben gültige Qualifikationen
-✅ **Flexibel**: Fallback für unbekannte IDs
+- **Total Employees**: 10
+- **Total Qualifications**: 20 (2 per employee)
+- **Qualification Levels**: SENIOR, PROFESSIONAL, EXPERT
+- **All Valid Until**: 2026-2027
+- **Mock Endpoints**: 20 (10 employees + 10 qualifications)
 
-## 📝 Verwendung in Requests
+## 🛠️ Customization
 
-```http
-# Projekt mit verantwortlichem Mitarbeiter erstellen
-POST /projects
+To add more employees or modify existing ones:
+
+1. Create new mapping file: `wiremock/mappings/get-employee-11.json`
+2. Create qualification mapping: `wiremock/mappings/get-qualifications-11.json`
+3. Restart WireMock: `docker compose restart`
+
+**Template:**
+```json
 {
-  "designation": "Web Development Project",
-  "responsibleEmployeeId": 4,  // Sarah Weber (Frontend Developer)
-  "customerId": 1,
-  ...
-}
-
-# Mitarbeiter zu Projekt zuweisen
-POST /projects/1/employees
-{
-  "employeeId": 7,  // Daniel Becker
-  "qualification": "Security Specialist"
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/employees/11"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 11,
+      "firstName": "New",
+      "lastName": "Employee",
+      "email": "new.employee@hitec.de",
+      "status": "ACTIVE"
+    }
+  }
 }
 ```
 
-**Alles bereit für realistische Tests!** 🎉
+---
+
+**✅ All 10 employees ready for testing!**
 

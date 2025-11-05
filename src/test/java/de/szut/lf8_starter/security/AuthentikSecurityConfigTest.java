@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.TestPropertySource;
 
@@ -37,7 +38,7 @@ class AuthentikSecurityConfigTest {
     @DisplayName("JwtDecoder Bean wird erstellt")
     void jwtDecoderBean_IsCreated() {
         // When
-        org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder = context.getBean(org.springframework.security.oauth2.jwt.JwtDecoder.class);
+        JwtDecoder jwtDecoder = context.getBean(JwtDecoder.class);
 
         // Then
         assertThat(jwtDecoder).isNotNull();

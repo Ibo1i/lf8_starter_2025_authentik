@@ -19,9 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static de.szut.lf8_starter.security.AuthentikSecurityConfig.getCorsConfigurationSource;
+
 /**
  * Security configuration for JWT authentication using local Keycloak.
- * Story 4.1: JWT-Authentifizierung implementieren
  *
  * Secures all endpoints except /actuator/health and /swagger-ui/**
  * Requires role 'hitec-employee' for access to protected endpoints.

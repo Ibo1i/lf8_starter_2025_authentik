@@ -12,19 +12,19 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectEntity, Long> {
 
-    // Suche nach Kunden-ID
+    // Find by customer ID
     List<ProjectEntity> findByCustomerId(Long customerId);
 
-    // Suche nach Verantwortlichem (Employee-ID)
+    // Find by responsible employee (Employee ID)
     List<ProjectEntity> findByResponsibleEmployeeId(Long employeeId);
 
-    // Suche nach Bezeichnung
+    // Find by designation
     Optional<ProjectEntity> findByDesignation(String designation);
 
-    // Prüfe ob Bezeichnung existiert
+    // Check if designation exists
     boolean existsByDesignation(String designation);
 
-    // Suche nach Kunde, sortiert nach Startdatum
+    // Find by customer, sorted by start date
     List<ProjectEntity> findByCustomerIdOrderByStartDateAsc(Long customerId);
 
     @Query("SELECT p FROM ProjectEntity p JOIN p.employeeIds e WHERE e = :employeeId")

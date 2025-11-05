@@ -17,8 +17,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 /**
- * Service für die Validierung von Mitarbeitern über den Employee-Service
- * Verwendet Circuit Breaker und Retry für Resilience
+ * Service for validating employees via the Employee Service
+ * Uses Circuit Breaker and Retry for resilience
  */
 @Service
 @Slf4j
@@ -32,11 +32,11 @@ public class EmployeeValidationService {
     }
 
     /**
-     * Validiert ob ein Mitarbeiter existiert und aktiv ist
-     * @param employeeId Die Mitarbeiternummer als Long
-     * @return true wenn Mitarbeiter existiert und aktiv ist
-     * @throws EmployeeNotFoundException wenn Mitarbeiter nicht gefunden wurde
-     * @throws CircuitBreakerOpenException wenn Circuit Breaker offen ist
+     * Validates if an employee exists and is active
+     * @param employeeId The employee ID as Long
+     * @return true if employee exists and is active
+     * @throws EmployeeNotFoundException if employee was not found
+     * @throws CircuitBreakerOpenException if Circuit Breaker is open
      */
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "employeeService", fallbackMethod = "validateEmployeeFallback")
     @Retry(name = "employeeService")
@@ -45,7 +45,7 @@ public class EmployeeValidationService {
 
         EmployeeDto employee = employeeServiceClient.getEmployee(employeeId);
 
-        // Prüfe ob Mitarbeiter aktiv ist
+        // Check if employee is active
         if (!"ACTIVE".equalsIgnoreCase(employee.getStatus())) {
             log.warn("Employee {} is not active. Status: {}", employeeId, employee.getStatus());
             throw new EmployeeNotFoundException(employeeId);
@@ -56,12 +56,12 @@ public class EmployeeValidationService {
     }
 
     /**
-     * Validiert ob ein Mitarbeiter eine bestimmte Qualifikation besitzt
-     * @param employeeId Die Mitarbeiternummer als Long
-     * @param requiredQualification Die erforderliche Qualifikation
-     * @return true wenn Mitarbeiter die Qualifikation besitzt und diese gültig ist
-     * @throws EmployeeQualificationException wenn Qualifikation nicht vorhanden
-     * @throws QualificationExpiredException wenn Qualifikation abgelaufen ist
+     * Validates if an employee has a specific qualification
+     * @param employeeId The employee ID as Long
+     * @param requiredQualification The required qualification
+     * @return true if employee has the qualification and it is valid
+     * @throws EmployeeQualificationException if qualification is not present
+     * @throws QualificationExpiredException if qualification is expired
      */
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "employeeService", fallbackMethod = "validateQualificationFallback")
     @Retry(name = "employeeService")
@@ -70,7 +70,7 @@ public class EmployeeValidationService {
 
         EmployeeQualificationsResponseDto response = employeeServiceClient.getQualifications(employeeId);
 
-        // Prüfe ob Qualifikation vorhanden ist
+        // Check if qualification is present
         Optional<QualificationDto> qualification = response.getQualifications().stream()
             .filter(q -> q.getName().equalsIgnoreCase(requiredQualification))
             .findFirst();
@@ -80,7 +80,7 @@ public class EmployeeValidationService {
             throw new EmployeeQualificationException(requiredQualification);
         }
 
-        // Prüfe ob Qualifikation abgelaufen ist
+        // Check if qualification is expired
         QualificationDto qual = qualification.get();
         if (qual.getValidUntil() != null && qual.getValidUntil().isBefore(LocalDate.now())) {
             log.warn("Qualification '{}' of employee {} is expired (valid until: {})",
@@ -93,16 +93,16 @@ public class EmployeeValidationService {
     }
 
     /**
-     * Fallback-Methode für validateEmployee bei Circuit Breaker OPEN
+     * Fallback method for validateEmployee when Circuit Breaker is OPEN
      */
     private boolean validateEmployeeFallback(Long employeeId, CallNotPermittedException ex) {
         log.error("Circuit Breaker is OPEN for employee validation. Employee ID: {}", employeeId);
-        // Circuit Breaker ist OPEN - werfe spezifische Exception
+        // Circuit Breaker is OPEN - throw specific exception
         throw new CircuitBreakerOpenException(io.github.resilience4j.circuitbreaker.CircuitBreaker.State.OPEN, 60);
     }
 
     /**
-     * Fallback-Methode für validateQualification bei Circuit Breaker OPEN
+     * Fallback method for validateQualification when Circuit Breaker is OPEN
      */
     private boolean validateQualificationFallback(Long employeeId, String qualification, CallNotPermittedException ex) {
         log.error("Circuit Breaker is OPEN for qualification validation. Employee ID: {}, Qualification: {}",
@@ -111,7 +111,7 @@ public class EmployeeValidationService {
     }
 
     /**
-     * Holt den Namen eines Mitarbeiters (für Logging/Display)
+     * Gets the name of an employee (for logging/display)
      */
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "employeeService", fallbackMethod = "getEmployeeNameFallback")
     public String getEmployeeName(Long employeeId) {
@@ -120,15 +120,15 @@ public class EmployeeValidationService {
             return employee.getFirstName() + " " + employee.getLastName();
         } catch (Exception e) {
             log.debug("Could not fetch employee name for {}: {}", employeeId, e.getMessage());
-            return "Mitarbeiter " + employeeId;
+            return "Employee " + employeeId;
         }
     }
 
     /**
-     * Fallback für getEmployeeName
+     * Fallback for getEmployeeName
      */
     private String getEmployeeNameFallback(Long employeeId, Exception ex) {
-        return "Mitarbeiter " + employeeId;
+        return "Employee " + employeeId;
     }
 }
 

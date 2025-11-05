@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 
 /**
  * Custom AuthenticationEntryPoint to handle 401 Unauthorized responses
- * according to the specification in Story 4.1.
  */
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {

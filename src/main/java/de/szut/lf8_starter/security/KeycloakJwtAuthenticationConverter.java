@@ -15,8 +15,6 @@ import java.util.Map;
 /**
  * Converter to extract roles from Keycloak/Authentik JWT token's realm_access claim
  * and convert them to Spring Security GrantedAuthority objects.
- *
- * Story 4.1: JWT-Authentifizierung implementieren
  */
 @Component
 public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {

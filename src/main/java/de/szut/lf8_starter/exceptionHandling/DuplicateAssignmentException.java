@@ -11,7 +11,7 @@ public class DuplicateAssignmentException extends RuntimeException {
     private final String role;
 
     public DuplicateAssignmentException(Long projectId, Long employeeId, LocalDate assignedDate, String role) {
-        super("Mitarbeiter mit der Mitarbeiternummer " + employeeId + " ist bereits dem Projekt mit der ID " + projectId + " zugewiesen.");
+        super("Employee with ID " + employeeId + " is already assigned to project with ID " + projectId + ".");
         this.projectId = projectId;
         this.employeeId = employeeId;
         this.assignedDate = assignedDate;

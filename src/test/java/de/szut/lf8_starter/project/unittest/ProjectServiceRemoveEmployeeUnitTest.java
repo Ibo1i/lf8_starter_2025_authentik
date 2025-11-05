@@ -4,6 +4,7 @@ import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_starter.project.ProjectEntity;
 import de.szut.lf8_starter.project.ProjectRepository;
 import de.szut.lf8_starter.project.ProjectService;
+import de.szut.lf8_starter.project.service.CustomerService;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ class ProjectServiceRemoveEmployeeUnitTest {
     private EmployeeService employeeService;
 
     @Mock
-    private de.szut.lf8_starter.project.service.CustomerService customerService;
+    private CustomerService customerService;
 
     @InjectMocks
     private ProjectService projectService;
@@ -47,7 +48,7 @@ class ProjectServiceRemoveEmployeeUnitTest {
     }
 
     @Test
-    @DisplayName("removeEmployeeFromProject - Erfolg: Mitarbeiter entfernt")
+    @DisplayName("removeEmployeeFromProject - Success: Employee removed")
     void removeEmployee_Success() {
         Long projectId = 1L;
         Long employeeId = 10L;
@@ -73,7 +74,7 @@ class ProjectServiceRemoveEmployeeUnitTest {
     }
 
     @Test
-    @DisplayName("removeEmployeeFromProject - Fehler: Projekt nicht gefunden")
+    @DisplayName("removeEmployeeFromProject - Fehler: Project not found")
     void removeEmployee_ProjectNotFound() {
         Long projectId = 99L;
         Long employeeId = 10L;

@@ -5,7 +5,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class EmployeeNotFoundException extends ResponseStatusException {
     public EmployeeNotFoundException(Long employeeId) {
-        super(HttpStatus.NOT_FOUND, "Mitarbeiter mit der Mitarbeiternummer " + employeeId + " existiert nicht.");
+        super(HttpStatus.NOT_FOUND, "Employee with ID " + employeeId + " does not exist.");
     }
 }
 

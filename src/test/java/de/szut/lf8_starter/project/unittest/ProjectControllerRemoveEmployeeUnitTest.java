@@ -44,7 +44,7 @@ class ProjectControllerRemoveEmployeeUnitTest {
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Erfolg")
+    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - success")
     void deleteEmployee_Success() throws Exception {
         Long projectId = 1L;
         Long employeeId = 5L;
@@ -58,7 +58,7 @@ class ProjectControllerRemoveEmployeeUnitTest {
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.message").value("Mitarbeiter erfolgreich aus Projekt entfernt."))
+            .andExpect(jsonPath("$.message").value("Employee successfully removed from project."))
             .andExpect(jsonPath("$.projectId").value(projectId))
             .andExpect(jsonPath("$.employeeId").value(employeeId));
 
@@ -66,24 +66,24 @@ class ProjectControllerRemoveEmployeeUnitTest {
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Projekt nicht gefunden -> 404")
+    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Project not found -> 404")
     void deleteEmployee_ProjectNotFound() throws Exception {
         Long projectId = 99L;
         Long employeeId = 5L;
 
-        when(projectService.removeEmployeeFromProject(eq(projectId), eq(employeeId))).thenThrow(new ResourceNotFoundException("Projekt mit der ID " + projectId + " existiert nicht."));
+        when(projectService.removeEmployeeFromProject(eq(projectId), eq(employeeId))).thenThrow(new ResourceNotFoundException("Project with the ID " + projectId + " does not exist."));
 
         mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.message").value("Projekt mit der ID " + projectId + " existiert nicht."));
+            .andExpect(jsonPath("$.message").value("Project with the ID " + projectId + " does not exist."));
 
         verify(projectService).removeEmployeeFromProject(projectId, employeeId);
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Ungültige employeeId -> 400")
+    @DisplayName("DELETE /projects/{projectId}/employees/{employeeId} - Invalid employeeId -> 400")
     void deleteEmployee_InvalidEmployeeId() throws Exception {
         mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}", 1, "abc")
                 .with(csrf())

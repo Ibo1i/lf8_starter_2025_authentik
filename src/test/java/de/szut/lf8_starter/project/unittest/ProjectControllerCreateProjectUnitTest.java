@@ -72,7 +72,7 @@ class ProjectControllerCreateProjectUnitTest {
     }
 
     @Test
-    @DisplayName("POST /projects - Erfolgreiches Erstellen eines Projekts")
+    @DisplayName("POST /projects - Successfully creating a project")
     void createProject_Success_ReturnsCreatedProject() throws Exception {
         ProjectCreateDto createDto = new ProjectCreateDto("Test Projekt", 50L, 100L, null, "Test Kommentar", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), null);
         when(projectMapper.mapCreateDtoToEntity(createDto)).thenReturn(testProject);
@@ -87,7 +87,7 @@ class ProjectControllerCreateProjectUnitTest {
     }
 
     @Test
-    @DisplayName("POST /projects - Validierung fehlgeschlagen")
+    @DisplayName("POST /projects - Validation failed")
     void createProject_ValidationFails_ReturnsBadRequest() throws Exception {
         when(projectService.create(any())).thenThrow(new RuntimeException("Validation failed"));
 

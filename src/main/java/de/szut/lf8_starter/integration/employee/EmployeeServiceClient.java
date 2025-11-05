@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
- * Feign Client für Employee-Service
- * Base-URL: http://employee-service:8080
+ * Feign Client for Employee Service
+ * Base URL: http://employee-service:8080
  */
 @FeignClient(
     name = "employee-service",
@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface EmployeeServiceClient {
 
     /**
-     * Holt Mitarbeiter-Details vom Employee-Service
-     * @param employeeId Die Mitarbeiternummer als Long (z.B. 12345)
-     * @return EmployeeDto mit Mitarbeiter-Daten
+     * Fetches employee details from the Employee Service
+     * @param employeeId The employee ID as Long (e.g., 12345)
+     * @return EmployeeDto with employee data
      */
     @GetMapping("/employees/{employeeId}")
     EmployeeDto getEmployee(@PathVariable("employeeId") Long employeeId);
 
     /**
-     * Holt Qualifikationen eines Mitarbeiters vom Employee-Service
-     * @param employeeId Die Mitarbeiternummer als Long (z.B. 12345)
-     * @return EmployeeQualificationsResponseDto mit allen Qualifikationen
+     * Fetches qualifications of an employee from the Employee Service
+     * @param employeeId The employee ID as Long (e.g., 12345)
+     * @return EmployeeQualificationsResponseDto with all qualifications
      */
     @GetMapping("/employees/{employeeId}/qualifications")
     EmployeeQualificationsResponseDto getQualifications(@PathVariable("employeeId") Long employeeId);

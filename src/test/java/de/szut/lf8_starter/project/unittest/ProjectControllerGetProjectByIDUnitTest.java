@@ -70,7 +70,7 @@ class ProjectControllerGetProjectByIDUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{projectId} - Erfolgreiches Abrufen eines existierenden Projekts")
+    @DisplayName("GET /projects/{projectId} - Successfully retrieving an existing project")
     void getProjectById_ExistingProject_ReturnsProject() throws Exception {
         Long projectId = 1L;
         when(projectService.readById(projectId)).thenReturn(testProject);
@@ -90,11 +90,11 @@ class ProjectControllerGetProjectByIDUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{projectId} - Projekt nicht gefunden - HTTP 404")
+    @DisplayName("GET /projects/{projectId} - Project not found - HTTP 404")
     void getProjectById_ProjectNotFound_Returns404() throws Exception {
         Long nonExistentId = 999L;
         when(projectService.readById(nonExistentId))
-                .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."));
+                .thenThrow(new ResourceNotFoundException("Project with the ID " + nonExistentId + " does not exist."));
 
         mockMvc.perform(get("/projects/{projectId}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -102,11 +102,11 @@ class ProjectControllerGetProjectByIDUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{projectId} - Ungültige ID (negative Zahl)")
+    @DisplayName("GET /projects/{projectId} - Invalid ID (negative number)")
     void getProjectById_InvalidNegativeId_ReturnsNotFound() throws Exception {
         Long invalidId = -1L;
         when(projectService.readById(invalidId))
-                .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + invalidId + " existiert nicht."));
+                .thenThrow(new ResourceNotFoundException("Project with the ID " + invalidId + " does not exist."));
 
         mockMvc.perform(get("/projects/{projectId}", invalidId)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -118,7 +118,7 @@ class ProjectControllerGetProjectByIDUnitTest {
     void getProjectById_ZeroId_ReturnsNotFound() throws Exception {
         Long zeroId = 0L;
         when(projectService.readById(zeroId))
-                .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + zeroId + " existiert nicht."));
+                .thenThrow(new ResourceNotFoundException("Project with the ID " + zeroId + " existiert nicht."));
 
         mockMvc.perform(get("/projects/{projectId}", zeroId)
                 .contentType(MediaType.APPLICATION_JSON))

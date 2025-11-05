@@ -1,79 +1,66 @@
 package de.szut.lf8_starter.config;
 
-
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
 
 @Configuration
 public class OpenAPIConfiguration {
 
-    private final ServletContext context;
-
-    public OpenAPIConfiguration(ServletContext context) {
-        this.context = context;
-    }
-
+    @Value("${server.port:8080}")
+    private String serverPort;
 
     @Bean
-    public OpenAPI springShopOpenAPI(
-    ) {
+    public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()
-                .addServersItem(new Server().url(this.context.getContextPath()))
                 .info(new Info()
-                        .title("LF8 project starter")
+                        .title("HiTec Project Management API")
                         .description("""
+                                REST API for managing projects and employee assignments with qualification validation.
                                 
-                                ## Auth
+                                **Features:**
+                                - Project CRUD operations
+                                - Employee assignment with qualification checks
+                                - Time conflict detection
+                                - Integration with external Employee Service
+                                - Circuit Breaker pattern for resilience
                                 
-                                ## Authentication
-                                
-                                This Hello service uses JWTs to authenticate requests. You will receive a bearer token by making a POST-Request in IntelliJ on:
-                                
-                                
-                                ```
-                                POST http://keycloak.szut.dev/auth/realms/szut/protocol/openid-connect/token
-                                Content-Type: application/x-www-form-urlencoded
-                                grant_type=password&client_id=employee-management-service&username=user&password=test
-                                ```
-                                
-                                
-                                or by CURL
-                                ```
-                                curl -X POST 'http://keycloak.szut.dev/auth/realms/szut/protocol/openid-connect/token'
-                                --header 'Content-Type: application/x-www-form-urlencoded'
-                                --data-urlencode 'grant_type=password'
-                                --data-urlencode 'client_id=employee-management-service'
-                                --data-urlencode 'username=user'
-                                --data-urlencode 'password=test'
-                                ```
-                                
-                                To get a bearer-token in Postman, you have to follow the instructions in\s
-                                 [Postman-Documentation](https://documenter.getpostman.com/view/7294517/SzmfZHnd).""")
-
-                        .version("0.1"))
+                                **Authentication:**
+                                All endpoints require a valid JWT Bearer token. Use the 'Authorize' button to enter your token.
+                                """)
+                        .version("1.0.0")
+                        .contact(new Contact()
+                                .name("HiTec Development Team")
+                                .email("support@hitec.example.com"))
+                        .license(new License()
+                                .name("MIT License")
+                                .url("https://opensource.org/licenses/MIT")))
+                .servers(List.of(
+                        new Server()
+                                .url("http://localhost:" + serverPort)
+                                .description("Local Development Server")
+                ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-                .components(
-                        new Components()
-                                .addSecuritySchemes(securitySchemeName,
-                                        new SecurityScheme()
-                                                .name(securitySchemeName)
-                                                .type(SecurityScheme.Type.HTTP)
-                                                .scheme("bearer")
-                                                .bearerFormat("JWT")
-                                )
-                );
+                .components(new Components()
+                        .addSecuritySchemes(securitySchemeName,
+                                new SecurityScheme()
+                                        .name(securitySchemeName)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                                        .description("Enter your JWT token obtained from Keycloak/Authentik")));
     }
-
-
 }
+

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 /**
  * Custom AccessDeniedHandler to handle 403 Forbidden responses
- * according to the specification in Story 4.1.
  */
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {

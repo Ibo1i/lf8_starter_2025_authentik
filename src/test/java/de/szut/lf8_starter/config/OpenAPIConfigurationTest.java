@@ -23,6 +23,8 @@ class OpenAPIConfigurationTest {
 
         // Then
         assertThat(openAPI).isNotNull();
-        assertThat(openAPI.getInfo().getTitle()).isEqualTo("LF8 project starter");
+        assertThat(openAPI.getInfo().getTitle()).isEqualTo("HiTec Project Management API");
+        assertThat(openAPI.getInfo().getVersion()).isEqualTo("1.0.0");
+        assertThat(openAPI.getComponents().getSecuritySchemes()).containsKey("bearerAuth");
     }
 }

@@ -166,12 +166,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
-        // Mappen von DB-Unique-Constraint-Verletzungen (z.B. parallele Anfragen) auf 409
+        // Map DB unique constraint violations (e.g., parallel requests) to 409
         ApiErrorResponse body = new ApiErrorResponse(
             LocalDateTime.now(),
             HttpStatus.CONFLICT.value(),
             HttpStatus.CONFLICT.getReasonPhrase(),
-            "Mitarbeiter ist bereits dem Projekt zugewiesen.",
+            "Employee is already assigned to the project.",
             request.getDescription(false).replace("uri=", ""),
             null,
             null,
@@ -191,7 +191,7 @@ public class GlobalExceptionHandler {
             LocalDateTime.now(),
             HttpStatus.BAD_REQUEST.value(),
             HttpStatus.BAD_REQUEST.getReasonPhrase(),
-            "Pflichtfeld fehlt oder ist ungültig.",
+            "Required field is missing or invalid.",
             request.getDescription(false).replace("uri=", ""),
             errors,
             null,
@@ -202,7 +202,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
-        // z.B. wenn PathVariable Long nicht parsebar ist
+        // e.g., when PathVariable Long cannot be parsed
         ApiErrorResponse body = new ApiErrorResponse(
             LocalDateTime.now(),
             HttpStatus.BAD_REQUEST.value(),

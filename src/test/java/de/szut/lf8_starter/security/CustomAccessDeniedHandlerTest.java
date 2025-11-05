@@ -65,7 +65,7 @@ class CustomAccessDeniedHandlerTest {
     }
 
     @Test
-    @DisplayName("Fehlende Rolle - liefert korrekten 403 Response")
+    @DisplayName("Missing role - returns correct 403 response")
     void whenRoleMissing_thenReturns403WithRoleInfo() throws Exception {
         // Given
         Collection<GrantedAuthority> authorities = List.of(
@@ -92,7 +92,7 @@ class CustomAccessDeniedHandlerTest {
     }
 
     @Test
-    @DisplayName("Keine Authentifizierung - liefert leere userRoles")
+    @DisplayName("No authentication - returns empty userRoles")
     void whenNoAuthentication_thenReturnsEmptyUserRoles() throws Exception {
         // Given
         when(securityContext.getAuthentication()).thenReturn(null);
@@ -110,7 +110,7 @@ class CustomAccessDeniedHandlerTest {
     }
 
     @Test
-    @DisplayName("Mehrere Rollen - extrahiert alle userRoles korrekt")
+    @DisplayName("Multiple roles - extracts all userRoles correctly")
     void whenMultipleRoles_thenExtractsAllUserRoles() throws Exception {
         // Given
         Collection<GrantedAuthority> authorities = Arrays.asList(

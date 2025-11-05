@@ -1,5 +1,6 @@
 package de.szut.lf8_starter.project.unittest;
 
+import de.szut.lf8_starter.dto.UpdateProjectDTO;
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_starter.project.ProjectController;
 import de.szut.lf8_starter.project.ProjectEntity;
@@ -68,9 +69,9 @@ class ProjectControllerUpdateProjectUnitTest {
     }
 
     @Test
-    @DisplayName("PUT /projects/{projectId} - Erfolgreiches Aktualisieren eines Projekts")
+    @DisplayName("PUT /projects/{projectId} - Successful updating of a project")
     void updateProject_Success_ReturnsUpdatedProject() throws Exception {
-        de.szut.lf8_starter.dto.UpdateProjectDTO updateDTO = new de.szut.lf8_starter.dto.UpdateProjectDTO("Updated Projekt", 60L, 200L, null, "Updated Kommentar", LocalDate.of(2025, 2, 1), LocalDate.of(2025, 11, 30));
+        UpdateProjectDTO updateDTO = new UpdateProjectDTO("Updated Projekt", 60L, 200L, null, "Updated Kommentar", LocalDate.of(2025, 2, 1), LocalDate.of(2025, 11, 30));
         ProjectEntity updatedEntity = new ProjectEntity();
         updatedEntity.setId(1L);
         updatedEntity.setDesignation("Updated Projekt");
@@ -94,11 +95,11 @@ class ProjectControllerUpdateProjectUnitTest {
     }
 
     @Test
-    @DisplayName("PUT /projects/{projectId} - Projekt nicht gefunden")
+    @DisplayName("PUT /projects/{projectId} - Project not found")
     void updateProject_NotFound_Returns404() throws Exception {
-        de.szut.lf8_starter.dto.UpdateProjectDTO updateDTO = new de.szut.lf8_starter.dto.UpdateProjectDTO("Updated Projekt", 60L, 200L, null, "Updated Kommentar", LocalDate.of(2025, 2, 1), LocalDate.of(2025, 11, 30));
+        UpdateProjectDTO updateDTO = new UpdateProjectDTO("Updated Projekt", 60L, 200L, null, "Updated Kommentar", LocalDate.of(2025, 2, 1), LocalDate.of(2025, 11, 30));
         when(projectService.updateFromDTO(999L, updateDTO))
-                .thenThrow(new ResourceNotFoundException("Projekt mit der ID 999 existiert nicht."));
+                .thenThrow(new ResourceNotFoundException("Project with ID 999 does not exist."));
 
         mockMvc.perform(put("/projects/{projectId}", 999L)
                         .contentType(MediaType.APPLICATION_JSON)

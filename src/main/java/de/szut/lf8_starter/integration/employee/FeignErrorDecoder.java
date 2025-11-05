@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 
 
 /**
- * Custom Error Decoder für Feign Client
- * Mappt HTTP-Fehler vom Employee-Service auf spezifische Exceptions
+ * Custom Error Decoder for Feign Client
+ * Maps HTTP errors from the Employee Service to specific exceptions
  */
 @Slf4j
 public class FeignErrorDecoder implements ErrorDecoder {
@@ -19,17 +19,17 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
     @Override
     public Exception decode(String methodKey, Response response) {
-        log.error("Employee-Service Error - Method: {}, Status: {}, Reason: {}",
+        log.error("Employee Service Error - Method: {}, Status: {}, Reason: {}",
                   methodKey, response.status(), response.reason());
 
         return switch (response.status()) {
             case 404 -> {
-                // Mitarbeiter nicht gefunden
+                // Employee not found
                 String employeeId = extractEmployeeIdFromUrl(response.request().url());
                 yield new EmployeeNotFoundException(parseEmployeeId(employeeId));
             }
             case 500, 502, 503 ->
-                // Service-Fehler
+                // Service error
                     new EmployeeServiceUnavailableException(response.status());
             case 504 ->
                 // Gateway Timeout

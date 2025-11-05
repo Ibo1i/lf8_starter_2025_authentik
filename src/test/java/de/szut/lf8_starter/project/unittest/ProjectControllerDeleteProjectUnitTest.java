@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 
@@ -54,7 +55,7 @@ class ProjectControllerDeleteProjectUnitTest {
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId} - Erfolgreiches Löschen (204)")
+    @DisplayName("DELETE /projects/{projectId} - Successful deletion (204)")
     void deleteProject_ExistingProject_ReturnsNoContent() throws Exception {
         Long projectId = 1L;
         doNothing().when(projectService).deleteById(projectId);
@@ -64,10 +65,10 @@ class ProjectControllerDeleteProjectUnitTest {
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId} - Projekt nicht gefunden (404)")
+    @DisplayName("DELETE /projects/{projectId} - Project not found (404)")
     void deleteProject_NotFound_ReturnsNotFound() throws Exception {
         Long nonExistentId = 999L;
-        doThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."))
+        doThrow(new ResourceNotFoundException("Project with the ID " + nonExistentId + " does not exist."))
                 .when(projectService).deleteById(nonExistentId);
 
         mockMvc.perform(delete("/projects/{projectId}", nonExistentId).with(csrf()).with(user("test").roles("USER")))
@@ -75,10 +76,10 @@ class ProjectControllerDeleteProjectUnitTest {
     }
 
     @Test
-    @DisplayName("DELETE /projects/{projectId} - Konflikt bei Mitarbeiterzuordnungen (409)")
+    @DisplayName("DELETE /projects/{projectId} - Conflict in employee assignments (409)")
     void deleteProject_Conflict_ReturnsConflict() throws Exception {
         Long id = 2L;
-        doThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT))
+        doThrow(new ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT))
                 .when(projectService).deleteById(id);
 
         mockMvc.perform(delete("/projects/{projectId}", id).with(csrf()).with(user("test").roles("USER")))

@@ -5,7 +5,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 public class EmployeeQualificationException extends ResponseStatusException {
     public EmployeeQualificationException(String qualification) {
-        super(HttpStatus.UNPROCESSABLE_ENTITY, "Mitarbeiter hat die Qualifikation " + qualification + " nicht.");
+        super(HttpStatus.UNPROCESSABLE_ENTITY, "Employee does not have the required qualification: " + qualification + ".");
     }
 }
 

@@ -14,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit Tests for KeycloakJwtAuthenticationConverter
- * Story 4.1: JWT-Authentifizierung - Rollen-Extraktion Tests
  */
 @DisplayName("KeycloakJwtAuthenticationConverter Tests")
 class KeycloakJwtAuthenticationConverterTest {
@@ -27,7 +26,7 @@ class KeycloakJwtAuthenticationConverterTest {
     }
 
     @Test
-    @DisplayName("Extrahiert hitec-employee Rolle korrekt aus realm_access")
+    @DisplayName("Extracts the hitec-employee role correctly from realm_access")
     void whenJwtContainsHitecEmployeeRole_thenExtractsCorrectly() {
         // Given
         Map<String, Object> realmAccess = new HashMap<>();
@@ -51,7 +50,7 @@ class KeycloakJwtAuthenticationConverterTest {
     }
 
     @Test
-    @DisplayName("Liefert leere Authorities wenn realm_access fehlt")
+    @DisplayName("Returns empty authorities if realm_access is missing")
     void whenRealmAccessMissing_thenReturnsEmptyAuthorities() {
         // Given
         Map<String, Object> claims = new HashMap<>();
@@ -69,11 +68,11 @@ class KeycloakJwtAuthenticationConverterTest {
     }
 
     @Test
-    @DisplayName("Liefert leere Authorities wenn roles fehlt")
+    @DisplayName("Returns empty authorities if roles is missing")
     void whenRolesMissing_thenReturnsEmptyAuthorities() {
         // Given
         Map<String, Object> realmAccess = new HashMap<>();
-        // roles key fehlt
+        // roles key missing
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", "user123");
@@ -90,7 +89,7 @@ class KeycloakJwtAuthenticationConverterTest {
     }
 
     @Test
-    @DisplayName("Konvertiert alle Rollen mit ROLE_ Präfix")
+    @DisplayName("Converts all roles with the ROLE_ prefix")
     void whenMultipleRoles_thenConvertsAllWithRolePrefix() {
         // Given
         Map<String, Object> realmAccess = new HashMap<>();

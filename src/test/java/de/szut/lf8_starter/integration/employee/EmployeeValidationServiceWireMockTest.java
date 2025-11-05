@@ -240,7 +240,7 @@ class EmployeeValidationServiceWireMockTest {
         String name = employeeValidationService.getEmployeeName(employeeId);
 
         // Assert
-        assertEquals("Mitarbeiter 12345", name);
+        assertEquals("Employee 12345", name);
     }
 }
 

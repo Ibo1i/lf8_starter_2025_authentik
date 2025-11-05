@@ -33,7 +33,7 @@ class EmployeeProjectsControllerGetEmployeeProjectsUnitTest {
     private ProjectService projectService;
 
     @Test
-    @DisplayName("GET /employees/{employeeId}/projects - Erfolgreiches Abrufen")
+    @DisplayName("GET /employees/{employeeId}/projects - Successful retrieval")
     void getEmployeeProjects_Success_ReturnsProjects() throws Exception {
         Long employeeId = 10L;
 
@@ -54,10 +54,10 @@ class EmployeeProjectsControllerGetEmployeeProjectsUnitTest {
     }
 
     @Test
-    @DisplayName("GET /employees/{employeeId}/projects - Mitarbeiter nicht gefunden -> 404")
+    @DisplayName("GET /employees/{employeeId}/projects - Employee not found -> 404")
     void getEmployeeProjects_EmployeeNotFound_Returns404() throws Exception {
         Long employeeId = 999L;
-        when(projectService.getEmployeeProjects(employeeId)).thenThrow(new ResourceNotFoundException("Mitarbeiter nicht gefunden"));
+        when(projectService.getEmployeeProjects(employeeId)).thenThrow(new ResourceNotFoundException("Employee not found"));
 
         mockMvc.perform(get("/employees/{employeeId}/projects", employeeId)
                 .contentType(MediaType.APPLICATION_JSON))

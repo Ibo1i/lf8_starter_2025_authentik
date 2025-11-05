@@ -44,8 +44,17 @@ authentik:
 # OpenAPI/Swagger Configuration
 springdoc:
   swagger-ui:
-    path: swagger
+    path: /swagger-ui/index.html
     try-it-out-enabled: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    default-models-expand-depth: 1
+    default-model-expand-depth: 1
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  show-actuator: false
 
 # Employee Service Configuration
 employee:

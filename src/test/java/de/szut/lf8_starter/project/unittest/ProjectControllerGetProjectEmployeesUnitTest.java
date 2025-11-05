@@ -5,6 +5,7 @@ import de.szut.lf8_starter.project.ProjectController;
 import de.szut.lf8_starter.project.ProjectEntity;
 import de.szut.lf8_starter.project.ProjectMapper;
 import de.szut.lf8_starter.project.ProjectService;
+import de.szut.lf8_starter.project.dto.ProjectEmployeesDto;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,13 +53,13 @@ class ProjectControllerGetProjectEmployeesUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{projektId}/employees - Erfolgreiches Abrufen der Projektmitarbeiter")
+    @DisplayName("GET /projects/{projektId}/employees - Successful retrieval of project staff")
     void getProjectEmployees_ExistingProject_ReturnsEmployees() throws Exception {
         Long projectId = 1L;
-        de.szut.lf8_starter.project.dto.ProjectEmployeesDto employeesDto = new de.szut.lf8_starter.project.dto.ProjectEmployeesDto(
+        ProjectEmployeesDto employeesDto = new ProjectEmployeesDto(
             1L,
             "Test Projekt",
-            java.util.List.of(new de.szut.lf8_starter.project.dto.ProjectEmployeesDto.EmployeeWithQualificationDto(10L, "Developer"))
+            java.util.List.of(new ProjectEmployeesDto.EmployeeWithQualificationDto(10L, "Developer"))
         );
 
         when(projectService.getProjectEmployees(projectId)).thenReturn(employeesDto);
@@ -74,11 +75,11 @@ class ProjectControllerGetProjectEmployeesUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{projektId}/employees - Projekt nicht gefunden - HTTP 404")
+    @DisplayName("GET /projects/{projektId}/employees - Project not found - HTTP 404")
     void getProjectEmployees_ProjectNotFound_Returns404() throws Exception {
         Long nonExistentId = 999L;
         when(projectService.getProjectEmployees(nonExistentId))
-                .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."));
+                .thenThrow(new ResourceNotFoundException("Project with the ID " + nonExistentId + " does not exist."));
 
         mockMvc.perform(get("/projects/{projektId}/employees", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON))
