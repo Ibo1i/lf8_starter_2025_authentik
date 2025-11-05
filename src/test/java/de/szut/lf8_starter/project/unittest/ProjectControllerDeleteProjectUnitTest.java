@@ -1,4 +1,4 @@
-package de.szut.lf8_starter.project.UnitTest;
+package de.szut.lf8_starter.project.unittest;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_starter.project.ProjectController;
@@ -12,20 +12,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProjectController.class)
 @WithMockUser
-@DisplayName("ProjectController Get Project Employees Tests")
-class ProjectControllerGetProjectEmployeesUnitTest {
+@DisplayName("ProjectController Delete Project Tests")
+class ProjectControllerDeleteProjectUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -52,37 +54,35 @@ class ProjectControllerGetProjectEmployeesUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects/{projektId}/employees - Erfolgreiches Abrufen der Projektmitarbeiter")
-    void getProjectEmployees_ExistingProject_ReturnsEmployees() throws Exception {
+    @DisplayName("DELETE /projects/{projectId} - Erfolgreiches Löschen (204)")
+    void deleteProject_ExistingProject_ReturnsNoContent() throws Exception {
         Long projectId = 1L;
-        de.szut.lf8_starter.project.dto.ProjectEmployeesDto employeesDto = new de.szut.lf8_starter.project.dto.ProjectEmployeesDto(
-            1L,
-            "Test Projekt",
-            java.util.List.of(new de.szut.lf8_starter.project.dto.ProjectEmployeesDto.EmployeeWithQualificationDto(10L, "Developer"))
-        );
+        doNothing().when(projectService).deleteById(projectId);
 
-        when(projectService.getProjectEmployees(projectId)).thenReturn(employeesDto);
-
-        mockMvc.perform(get("/projects/{projektId}/employees", projectId)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.projectId").value(1))
-                .andExpect(jsonPath("$.designation").value("Test Projekt"))
-                .andExpect(jsonPath("$.employees[0].employeeId").value(10))
-                .andExpect(jsonPath("$.employees[0].qualification").value("Developer"));
+        mockMvc.perform(delete("/projects/{projectId}", projectId).with(csrf()).with(user("test").roles("USER")))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    @DisplayName("GET /projects/{projektId}/employees - Projekt nicht gefunden - HTTP 404")
-    void getProjectEmployees_ProjectNotFound_Returns404() throws Exception {
+    @DisplayName("DELETE /projects/{projectId} - Projekt nicht gefunden (404)")
+    void deleteProject_NotFound_ReturnsNotFound() throws Exception {
         Long nonExistentId = 999L;
-        when(projectService.getProjectEmployees(nonExistentId))
-                .thenThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."));
+        doThrow(new ResourceNotFoundException("Projekt mit der ID " + nonExistentId + " existiert nicht."))
+                .when(projectService).deleteById(nonExistentId);
 
-        mockMvc.perform(get("/projects/{projektId}/employees", nonExistentId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/projects/{projectId}", nonExistentId).with(csrf()).with(user("test").roles("USER")))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /projects/{projectId} - Konflikt bei Mitarbeiterzuordnungen (409)")
+    void deleteProject_Conflict_ReturnsConflict() throws Exception {
+        Long id = 2L;
+        doThrow(new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT))
+                .when(projectService).deleteById(id);
+
+        mockMvc.perform(delete("/projects/{projectId}", id).with(csrf()).with(user("test").roles("USER")))
+                .andExpect(status().isConflict());
     }
 
     public ProjectMapper getProjectMapper() {

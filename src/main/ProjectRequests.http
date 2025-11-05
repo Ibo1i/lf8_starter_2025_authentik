@@ -1,6 +1,31 @@
+### ============================================
+### JWT Token von Keycloak holen (Story 4.1)
+### ============================================
+### WICHTIG: Führe diesen Request ZUERST aus, um den Token zu bekommen!
+### Der access_token wird automatisch in der Variable {{auth_token}} gespeichert.
+
+# @name getToken
+POST http://localhost:9090/realms/hitec-realm/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=project-management-service
+&client_secret=jBCaEJraTUdFX1CzbHvxGLrxZmGmggrF
+&grant_type=client_credentials
+&scope=openid
+
+> {%
+    client.global.set("auth_token", response.body.access_token);
+    client.log("✅ Token gespeichert! Gültig für: " + response.body.expires_in + " Sekunden");
+%}
+
+### ============================================
+### PROJEKT-MANAGEMENT ENDPOINTS (mit JWT)
+### ============================================
+
 ### Neues Projekt erstellen
 POST http://localhost:8080/projects
 Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
 {
   "designation": "Neues Projekt",
@@ -12,20 +37,18 @@ Content-Type: application/json
   "plannedEndDate": "2026-03-31"
 }
 
-
-### Projekt abrufen
-GET http://localhost:8080/projects/1
-Content-Type: application/json
-
-
 ### Alle Projekte auflisten
 GET http://localhost:8080/projects
-Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
+### Projekt abrufen (by ID)
+GET http://localhost:8080/projects/1
+Authorization: Bearer {{auth_token}}
 
 ### Projekt aktualisieren
 PUT http://localhost:8080/projects/1
 Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
 {
   "designation": "Aktualisiertes Projekt",
@@ -37,32 +60,32 @@ Content-Type: application/json
   "plannedEndDate": "2026-06-30"
 }
 
-
 ### Projekt löschen
 DELETE http://localhost:8080/projects/1
-Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
+### ============================================
+### MITARBEITER-ZUWEISUNGEN (mit JWT)
+### ============================================
 
 ### Mitarbeiter einem Projekt zuweisen
 POST http://localhost:8080/projects/1/employees
 Content-Type: application/json
+Authorization: Bearer {{auth_token}}
 
 {
   "employeeId": 1,
   "qualification": "Java"
 }
 
-
 ### Mitarbeiter von einem Projekt entfernen
 DELETE http://localhost:8080/projects/1/employees/1
-Content-Type: application/json
-
+Authorization: Bearer {{auth_token}}
 
 ### Mitarbeiterliste eines Projekts abrufen
 GET http://localhost:8080/projects/1/employees
-Content-Type: application/json
-
+Authorization: Bearer {{auth_token}}
 
 ### Projekte eines Mitarbeiters abrufen
 GET http://localhost:8080/employees/1/projects
-Content-Type: application/json
+Authorization: Bearer {{auth_token}}

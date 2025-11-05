@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class SampleDataCreator implements ApplicationRunner {
 
-    private HelloRepository repository;
+    private final HelloRepository repository;
 
     public SampleDataCreator(HelloRepository repository) {
         this.repository = repository;

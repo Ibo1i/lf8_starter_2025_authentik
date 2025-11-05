@@ -157,13 +157,34 @@ public class GlobalExceptionHandler {
             LocalDateTime.now(),
             HttpStatus.UNAUTHORIZED.value(),
             HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-            "JWT-Token ist ungültig oder fehlt.",
+            "JWT-Token ist ungültig oder abgelaufen.",
             request.getDescription(false).replace("uri=", ""),
             null,
+            null,
+            null,
+            ex.getMessage(),
             null,
             null
         );
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex, WebRequest request) {
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.FORBIDDEN.value(),
+            HttpStatus.FORBIDDEN.getReasonPhrase(),
+            "Unzureichende Berechtigungen. Erforderliche Rolle: hitec-employee",
+            request.getDescription(false).replace("uri=", ""),
+            null,
+            null,
+            null,
+            null,
+            List.of("hitec-employee"),
+            List.of()
+        );
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ResponseStatusException.class)

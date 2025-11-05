@@ -118,8 +118,8 @@ public class ProjectService {
                 .map(p -> new ConflictingProjectDto(p.getId(), p.getDesignation(), p.getStartDate(), p.getActualEndDate() != null ? p.getActualEndDate() : p.getPlannedEndDate()))
                 .collect(Collectors.toList());
 
-            String firstStart = conflictingDtos.get(0).getStartDate().format(df).toString();
-            String firstEnd = conflictingDtos.get(0).getEndDate().format(df).toString();
+            String firstStart = conflictingDtos.getFirst().getStartDate().format(df);
+            String firstEnd = conflictingDtos.getFirst().getEndDate().format(df);
             throw new TimeConflictException(firstStart, firstEnd, conflictingDtos);
         }
 

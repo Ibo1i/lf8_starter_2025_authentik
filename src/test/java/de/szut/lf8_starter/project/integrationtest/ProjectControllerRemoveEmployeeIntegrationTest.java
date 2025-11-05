@@ -1,4 +1,4 @@
-package de.szut.lf8_starter.project.Integrationtest;
+package de.szut.lf8_starter.project.integrationtest;
 
 import de.szut.lf8_starter.project.ProjectEntity;
 import de.szut.lf8_starter.project.ProjectRepository;
@@ -8,13 +8,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WithMockUser
 class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -23,6 +23,14 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
     @AfterEach
     void tearDown() {
         projectRepository.deleteAll();
+    }
+
+    private RequestPostProcessor createJwt() {
+        return jwt().jwt(jwt -> jwt
+                .claim("sub", "user123")
+                .claim("preferred_username", "john.doe")
+                .claim("realm_access", java.util.Map.of("roles", java.util.List.of("hitec-employee")))
+        ).authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_hitec-employee"));
     }
 
     @Test
@@ -42,8 +50,9 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
         ProjectEntity savedProject = projectRepository.save(project);
         Long projectId = savedProject.getId();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
+                        .with(createJwt())
+                        .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("Mitarbeiter erfolgreich aus Projekt entfernt."))
             .andExpect(jsonPath("$.projectId").value(projectId))
@@ -56,8 +65,9 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
         Long projectId = 999L;
         Long employeeId = 10L;
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
+                        .with(createJwt())
+                        .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message").value("Projekt mit der ID 999 existiert nicht."));
     }
@@ -78,8 +88,9 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
         ProjectEntity savedProject = projectRepository.save(project);
         Long projectId = savedProject.getId();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}", projectId, employeeId)
+                        .with(createJwt())
+                        .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message").value("Mitarbeiter mit der Mitarbeiternummer 999 arbeitet in dem Projekt mit der Projekt-ID " + projectId + " nicht."));
     }
@@ -90,8 +101,9 @@ class ProjectControllerRemoveEmployeeIntegrationTest extends AbstractIntegration
         Long projectId = 1L;
         String invalidEmployeeId = "abc";
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/projects/{projectId}/employees/{employeeId}", projectId, invalidEmployeeId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/projects/{projectId}/employees/{employeeId}", projectId, invalidEmployeeId)
+                        .with(createJwt())
+                        .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("Mitarbeiternummer hat ein ungültiges Format."));
     }

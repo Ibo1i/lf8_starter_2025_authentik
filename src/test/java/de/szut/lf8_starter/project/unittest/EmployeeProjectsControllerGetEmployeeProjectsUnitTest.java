@@ -1,4 +1,4 @@
-package de.szut.lf8_starter.project.UnitTest;
+package de.szut.lf8_starter.project.unittest;
 
 import de.szut.lf8_starter.exceptionHandling.ResourceNotFoundException;
 import de.szut.lf8_starter.project.EmployeeProjectsController;

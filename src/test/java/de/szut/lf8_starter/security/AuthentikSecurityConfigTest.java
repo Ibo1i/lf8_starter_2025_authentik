@@ -6,10 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@TestPropertySource(properties = {
+    "authentik.enabled=true",
+    "keycloak.enabled=false",
+    "authentik.jwk-set-uri=http://localhost:9000/application/o/hitec/jwks/",
+    "authentik.issuer-uri=http://localhost:9000/application/o/hitec/"
+})
 @DisplayName("AuthentikSecurityConfig Tests")
 class AuthentikSecurityConfigTest {
 
@@ -20,7 +27,7 @@ class AuthentikSecurityConfigTest {
     @DisplayName("SecurityFilterChain Bean wird erstellt")
     void securityFilterChainBean_IsCreated() {
         // When
-        SecurityFilterChain filterChain = context.getBean(SecurityFilterChain.class);
+        SecurityFilterChain filterChain = context.getBean("authentikFilterChain", SecurityFilterChain.class);
 
         // Then
         assertThat(filterChain).isNotNull();

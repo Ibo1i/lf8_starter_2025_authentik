@@ -1,9 +1,10 @@
-package de.szut.lf8_starter.project.UnitTest;
+package de.szut.lf8_starter.project.unittest;
 
 import de.szut.lf8_starter.project.ProjectController;
 import de.szut.lf8_starter.project.ProjectEntity;
 import de.szut.lf8_starter.project.ProjectMapper;
 import de.szut.lf8_starter.project.ProjectService;
+import de.szut.lf8_starter.project.dto.ProjectCreateDto;
 import de.szut.lf8_starter.project.dto.ProjectGetDto;
 import de.szut.lf8_starter.project.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,16 +19,17 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProjectController.class)
 @WithMockUser
-@DisplayName("ProjectController Get All Projects Tests")
-class ProjectControllerGetAllProjectsUnitTest {
+@DisplayName("ProjectController Create Project Tests")
+class ProjectControllerCreateProjectUnitTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -70,18 +72,30 @@ class ProjectControllerGetAllProjectsUnitTest {
     }
 
     @Test
-    @DisplayName("GET /projects - Alle Projekte abrufen")
-    void getAllProjects_ReturnsListOfProjects() throws Exception {
-        List<ProjectEntity> projects = List.of(testProject);
-        when(projectService.readAll()).thenReturn(projects);
+    @DisplayName("POST /projects - Erfolgreiches Erstellen eines Projekts")
+    void createProject_Success_ReturnsCreatedProject() throws Exception {
+        ProjectCreateDto createDto = new ProjectCreateDto("Test Projekt", 50L, 100L, null, "Test Kommentar", LocalDate.of(2025, 1, 1), LocalDate.of(2025, 12, 31), null);
+        when(projectMapper.mapCreateDtoToEntity(createDto)).thenReturn(testProject);
+        when(projectService.create(testProject)).thenReturn(testProject);
         when(projectMapper.mapToGetDto(testProject)).thenReturn(testProjectDto);
 
-        mockMvc.perform(get("/projects")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].designation").value("Test Projekt"));
+        mockMvc.perform(post("/projects")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"designation\":\"Test Projekt\",\"customerId\":100,\"responsibleEmployeeId\":50,\"comment\":\"Test Kommentar\",\"startDate\":\"2025-01-01\",\"plannedEndDate\":\"2025-12-31\"}")
+                .with(csrf()))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("POST /projects - Validierung fehlgeschlagen")
+    void createProject_ValidationFails_ReturnsBadRequest() throws Exception {
+        when(projectService.create(any())).thenThrow(new RuntimeException("Validation failed"));
+
+        mockMvc.perform(post("/projects")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"designation\":\"\",\"customerId\":100,\"responsibleEmployeeId\":50,\"comment\":\"Test Kommentar\",\"startDate\":\"2025-01-01\",\"plannedEndDate\":\"2025-12-31\"}")
+                .with(csrf()))
+                .andExpect(status().isInternalServerError());
     }
 
     public EmployeeService getEmployeeService() {

@@ -1,4 +1,4 @@
-package de.szut.lf8_starter.project.Integrationtest;
+package de.szut.lf8_starter.project.integrationtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.szut.lf8_starter.dto.UpdateProjectDTO;
@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDate;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,6 +29,14 @@ class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
     private ProjectRepository projectRepository;
 
     private ProjectEntity testProject;
+
+    private RequestPostProcessor createJwt() {
+        return jwt().jwt(jwt -> jwt
+                .claim("sub", "user123")
+                .claim("preferred_username", "john.doe")
+                .claim("realm_access", java.util.Map.of("roles", java.util.List.of("hitec-employee")))
+        ).authorities(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_hitec-employee"));
+    }
 
     @BeforeEach
     void setUp() {
@@ -56,6 +66,7 @@ class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
         updateDTO.setPlannedEndDate(LocalDate.now().plusDays(60));
 
         mockMvc.perform(put("/projects/" + testProject.getId())
+                        .with(createJwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isOk())
@@ -75,6 +86,7 @@ class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
         updateDTO.setPlannedEndDate(LocalDate.now().plusDays(30));
 
         mockMvc.perform(put("/projects/99999")
+                        .with(createJwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isNotFound());
@@ -90,6 +102,7 @@ class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
         updateDTO.setPlannedEndDate(LocalDate.now());
 
         mockMvc.perform(put("/projects/" + testProject.getId())
+                        .with(createJwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDTO)))
                 .andExpect(status().isBadRequest());

@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,7 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 /**
- * Security configuration for JWT authentication using Keycloak/Authentik.
+ * Security configuration for JWT authentication using local Keycloak.
  * Story 4.1: JWT-Authentifizierung implementieren
  *
  * Secures all endpoints except /actuator/health and /swagger-ui/**
@@ -28,20 +29,23 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(jsr250Enabled = true)
-@ConditionalOnProperty(value = "authentik.enabled", havingValue = "true")
-public class AuthentikSecurityConfig {
+@ConditionalOnProperty(value = "keycloak.enabled", havingValue = "true")
+public class KeycloakSecurityConfig {
 
-    @Value("${authentik.jwk-set-uri:https://authentik.szut.dev/application/o/hitec/jwks/}")
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     private String jwkSetUri;
 
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final KeycloakHealthService keycloakHealthService;
 
-    public AuthentikSecurityConfig(
+    public KeycloakSecurityConfig(
             CustomAuthenticationEntryPoint authenticationEntryPoint,
-            CustomAccessDeniedHandler accessDeniedHandler) {
+            CustomAccessDeniedHandler accessDeniedHandler,
+            KeycloakHealthService keycloakHealthService) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.accessDeniedHandler = accessDeniedHandler;
+        this.keycloakHealthService = keycloakHealthService;
     }
 
     @Bean
@@ -50,8 +54,14 @@ public class AuthentikSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain authentikFilterChain(HttpSecurity http, KeycloakJwtAuthenticationConverter jwtConverter) throws Exception {
+    public ServiceUnavailableFilter serviceUnavailableFilter() {
+        return new ServiceUnavailableFilter(keycloakHealthService);
+    }
+
+    @Bean
+    public SecurityFilterChain keycloakFilterChain(HttpSecurity http, KeycloakJwtAuthenticationConverter jwtConverter, ServiceUnavailableFilter serviceUnavailableFilter) throws Exception {
         http
+                .addFilterBefore(serviceUnavailableFilter, BasicAuthenticationFilter.class)
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -89,4 +99,3 @@ public class AuthentikSecurityConfig {
         return source;
     }
 }
-
