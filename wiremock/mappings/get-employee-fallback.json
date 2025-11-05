@@ -1,0 +1,21 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/employees/[0-9]+"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 999,
+      "firstName": "Unbekannt",
+      "lastName": "Mitarbeiter",
+      "email": "unknown@hitec.de",
+      "status": "ACTIVE"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

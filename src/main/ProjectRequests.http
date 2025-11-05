@@ -9,7 +9,7 @@ POST http://localhost:9090/realms/hitec-realm/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 client_id=project-management-service
-&client_secret=jBCaEJraTUdFX1CzbHvxGLrxZmGmggrF
+&client_secret=aw6wMz5ZBRSyMHjS0y26SV07DDNNhTXa
 &grant_type=client_credentials
 &scope=openid
 
@@ -33,7 +33,7 @@ Authorization: Bearer {{auth_token}}
   "customerId": 1,
   "customerContactPerson": "Max Mustermann",
   "comment": "Dies ist ein neues Projekt",
-  "startDate": "2025-10-01",
+  "startDate": "2025-11-10",
   "plannedEndDate": "2026-03-31"
 }
 
@@ -64,9 +64,6 @@ Authorization: Bearer {{auth_token}}
 DELETE http://localhost:8080/projects/1
 Authorization: Bearer {{auth_token}}
 
-### ============================================
-### MITARBEITER-ZUWEISUNGEN (mit JWT)
-### ============================================
 
 ### Mitarbeiter einem Projekt zuweisen
 POST http://localhost:8080/projects/1/employees
@@ -74,12 +71,12 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "employeeId": 1,
-  "qualification": "Java"
+  "employeeId": 6,
+  "qualification": "Java Senior Developer"
 }
 
 ### Mitarbeiter von einem Projekt entfernen
-DELETE http://localhost:8080/projects/1/employees/1
+DELETE http://localhost:8080/projects/1/employees/6
 Authorization: Bearer {{auth_token}}
 
 ### Mitarbeiterliste eines Projekts abrufen

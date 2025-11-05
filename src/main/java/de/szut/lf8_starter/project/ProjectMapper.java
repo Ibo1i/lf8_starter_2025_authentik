@@ -1,6 +1,7 @@
 package de.szut.lf8_starter.project;
 
 import de.szut.lf8_starter.project.dto.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,6 +51,11 @@ public class ProjectMapper {
     }
 
     public EmployeeProjectsDto mapToEmployeeProjectsDto(Long employeeId, List<ProjectEntity> projects) {
+        return getEmployeeProjectsDto(employeeId, projects);
+    }
+
+    @NotNull
+    static EmployeeProjectsDto getEmployeeProjectsDto(Long employeeId, List<ProjectEntity> projects) {
         List<EmployeeProjectsDto.ProjectWithRoleDto> projectDtos =
             projects.stream()
                 .map(project -> new EmployeeProjectsDto.ProjectWithRoleDto(

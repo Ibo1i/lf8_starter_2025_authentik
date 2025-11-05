@@ -1,0 +1,21 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/4"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 4,
+      "firstName": "Sarah",
+      "lastName": "Weber",
+      "email": "sarah.weber@hitec.de",
+      "status": "ACTIVE"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

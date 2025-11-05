@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/2/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 2,
+      "qualifications": [
+        {
+          "name": "Python Expert",
+          "level": "EXPERT",
+          "validUntil": "2027-03-31"
+        },
+        {
+          "name": "Project Manager",
+          "level": "SENIOR",
+          "validUntil": "2026-09-30"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

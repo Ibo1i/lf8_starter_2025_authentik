@@ -1,11 +1,15 @@
 volumes:
   lf8Starter_postgres_data:
     driver: local
+  keycloak_data:
+    driver: local
 
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:23.0
     container_name: hitec-keycloak
+    volumes:
+      - keycloak_data:/opt/keycloak/data
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -34,3 +38,15 @@ services:
       POSTGRES_PASSWORD: secret
     ports:
       - "5432:5432"
+
+  employee-service:
+    container_name: employee-service-mock
+    image: wiremock/wiremock:3.3.1
+    ports:
+      - "7070:8080"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+      - ./wiremock/__files:/home/wiremock/__files
+    command:
+      - --global-response-templating
+      - --verbose

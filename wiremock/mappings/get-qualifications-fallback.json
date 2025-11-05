@@ -1,0 +1,24 @@
+{
+  "priority": 10,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/employees/[0-9]+/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 999,
+      "qualifications": [
+        {
+          "name": "General Skills",
+          "level": "PROFESSIONAL",
+          "validUntil": "2026-12-31"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

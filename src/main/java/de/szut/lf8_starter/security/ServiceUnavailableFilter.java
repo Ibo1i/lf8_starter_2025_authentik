@@ -32,19 +32,13 @@ public class ServiceUnavailableFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
 
-            ApiErrorResponse errorResponse = new ApiErrorResponse(
-                    LocalDateTime.now(),
-                    HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-                    "Service Unavailable",
-                    "Authentifizierungsservice nicht erreichbar.",
-                    request.getRequestURI(),
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
+            ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                    .timestamp(LocalDateTime.now())
+                    .status(HttpServletResponse.SC_SERVICE_UNAVAILABLE)
+                    .error("Service Unavailable")
+                    .message("Authentifizierungsservice nicht erreichbar.")
+                    .path(request.getRequestURI())
+                    .build();
 
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
             return;

@@ -1,5 +1,6 @@
 package de.szut.lf8_starter.security;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -78,6 +79,11 @@ public class AuthentikSecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+        return getCorsConfigurationSource();
+    }
+
+    @NotNull
+    static CorsConfigurationSource getCorsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOriginPatterns(List.of("*"));
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

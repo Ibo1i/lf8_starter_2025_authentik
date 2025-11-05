@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.szut.lf8_starter.project.ProjectMapper.getEmployeeProjectsDto;
+
 @Service
 public class ProjectService {
     private final ProjectRepository repository;
@@ -202,18 +204,7 @@ public class ProjectService {
      * Hilfsmethode für Mapper-Zugriff
      */
     private EmployeeProjectsDto mapToEmployeeProjectsDto(Long employeeId, List<ProjectEntity> projects) {
-        List<EmployeeProjectsDto.ProjectWithRoleDto> projectDtos =
-            projects.stream()
-                .map(project -> new EmployeeProjectsDto.ProjectWithRoleDto(
-                    project.getId(),
-                    project.getDesignation(),
-                    project.getStartDate(),
-                    project.getActualEndDate() != null ? project.getActualEndDate() : project.getPlannedEndDate(),
-                    project.getEmployeeQualifications().get(employeeId)
-                ))
-                .collect(Collectors.toList());
-
-        return new EmployeeProjectsDto(employeeId, projectDtos);
+        return getEmployeeProjectsDto(employeeId, projects);
     }
 
     /**

@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/3/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 3,
+      "qualifications": [
+        {
+          "name": "DevOps Engineer",
+          "level": "SENIOR",
+          "validUntil": "2026-08-15"
+        },
+        {
+          "name": "Cloud Architect",
+          "level": "PROFESSIONAL",
+          "validUntil": "2027-01-31"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

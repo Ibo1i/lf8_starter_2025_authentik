@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/5/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 5,
+      "qualifications": [
+        {
+          "name": "Database Administrator",
+          "level": "EXPERT",
+          "validUntil": "2027-02-28"
+        },
+        {
+          "name": "SQL Developer",
+          "level": "SENIOR",
+          "validUntil": "2026-10-31"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

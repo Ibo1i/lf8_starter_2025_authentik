@@ -2,18 +2,22 @@ package de.szut.lf8_starter.project.integrationtest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.szut.lf8_starter.dto.UpdateProjectDTO;
+import de.szut.lf8_starter.integration.employee.EmployeeValidationService;
 import de.szut.lf8_starter.project.ProjectEntity;
 import de.szut.lf8_starter.project.ProjectRepository;
 import de.szut.lf8_starter.testcontainers.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDate;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -28,6 +32,9 @@ class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @MockBean
+    private EmployeeValidationService employeeValidationService;
+
     private ProjectEntity testProject;
 
     private RequestPostProcessor createJwt() {
@@ -41,6 +48,9 @@ class ProjectUpdateIntegrationTest extends AbstractIntegrationTest {
     @BeforeEach
     void setUp() {
         projectRepository.deleteAll();
+
+        // Mock Employee Service - alle Employee IDs sind valid
+        when(employeeValidationService.validateEmployee(anyLong())).thenReturn(true);
 
         testProject = new ProjectEntity(
                 "Altes Projekt",

@@ -1,0 +1,21 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/99999"
+  },
+  "response": {
+    "status": 404,
+    "jsonBody": {
+      "timestamp": "2025-11-05T19:00:00",
+      "status": 404,
+      "error": "Not Found",
+      "message": "Employee not found",
+      "path": "/employees/99999"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

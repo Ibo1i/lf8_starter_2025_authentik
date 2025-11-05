@@ -1,0 +1,26 @@
+{
+  "employeeId": 1,
+  "qualifications": [
+    {
+      "name": "Java Senior Developer",
+      "level": "SENIOR",
+      "validUntil": "2026-12-31"
+    },
+    {
+      "name": "Project Manager",
+      "level": "SENIOR",
+      "validUntil": "2026-12-31"
+    },
+    {
+      "name": "Python Expert",
+      "level": "EXPERT",
+      "validUntil": "2026-12-31"
+    },
+    {
+      "name": "Scrum Master",
+      "level": "PROFESSIONAL",
+      "validUntil": "2026-12-31"
+    }
+  ]
+}
+

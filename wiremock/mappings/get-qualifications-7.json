@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/7/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 7,
+      "qualifications": [
+        {
+          "name": "Security Specialist",
+          "level": "EXPERT",
+          "validUntil": "2026-09-30"
+        },
+        {
+          "name": "Network Administrator",
+          "level": "SENIOR",
+          "validUntil": "2027-01-15"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/4/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 4,
+      "qualifications": [
+        {
+          "name": "Frontend Developer",
+          "level": "SENIOR",
+          "validUntil": "2026-11-30"
+        },
+        {
+          "name": "UX Designer",
+          "level": "PROFESSIONAL",
+          "validUntil": "2026-07-15"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

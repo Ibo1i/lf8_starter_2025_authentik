@@ -3,7 +3,6 @@ package de.szut.lf8_starter.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.szut.lf8_starter.project.dto.ApiErrorResponse;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -47,19 +46,14 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             details = authException.getMessage();
         }
 
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpServletResponse.SC_UNAUTHORIZED,
-                "Unauthorized",
-                message,
-                request.getRequestURI(),
-                null,
-                null,
-                null,
-                details,
-                null,
-                null
-        );
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpServletResponse.SC_UNAUTHORIZED)
+                .error("Unauthorized")
+                .message(message)
+                .path(request.getRequestURI())
+                .details(details)
+                .build();
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

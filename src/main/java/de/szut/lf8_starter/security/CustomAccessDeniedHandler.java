@@ -3,7 +3,6 @@ package de.szut.lf8_starter.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.szut.lf8_starter.project.dto.ApiErrorResponse;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -50,19 +49,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
                     .collect(Collectors.toList());
         }
 
-        ApiErrorResponse errorResponse = new ApiErrorResponse(
-                LocalDateTime.now(),
-                HttpServletResponse.SC_FORBIDDEN,
-                "Forbidden",
-                "Unzureichende Berechtigungen. Erforderliche Rolle: hitec-employee",
-                request.getRequestURI(),
-                null,
-                null,
-                null,
-                null,
-                List.of("hitec-employee"),
-                userRoles
-        );
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpServletResponse.SC_FORBIDDEN)
+                .error("Forbidden")
+                .message("Unzureichende Berechtigungen. Erforderliche Rolle: hitec-employee")
+                .path(request.getRequestURI())
+                .requiredRoles(List.of("hitec-employee"))
+                .userRoles(userRoles)
+                .build();
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

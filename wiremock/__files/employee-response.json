@@ -1,0 +1,8 @@
+{
+  "employeeId": 1,
+  "firstName": "Max",
+  "lastName": "Mustermann",
+  "email": "max.mustermann@hitec.de",
+  "status": "ACTIVE"
+}
+

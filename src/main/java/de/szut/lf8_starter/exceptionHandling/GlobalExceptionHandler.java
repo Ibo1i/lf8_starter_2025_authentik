@@ -65,6 +65,71 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler(QualificationExpiredException.class)
+    public ResponseEntity<ApiErrorResponse> handleQualificationExpired(QualificationExpiredException ex, WebRequest request) {
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.UNPROCESSABLE_ENTITY.value(),
+            HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(),
+            ex.getReason(),
+            request.getDescription(false).replace("uri=", ""),
+            null,
+            null,
+            null
+        );
+        return new ResponseEntity<>(body, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(EmployeeServiceTimeoutException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmployeeServiceTimeout(EmployeeServiceTimeoutException ex, WebRequest request) {
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.GATEWAY_TIMEOUT.value(),
+            HttpStatus.GATEWAY_TIMEOUT.getReasonPhrase(),
+            ex.getReason(),
+            request.getDescription(false).replace("uri=", ""),
+            null,
+            null,
+            null
+        );
+        body.setService(ex.getService());
+        return new ResponseEntity<>(body, HttpStatus.GATEWAY_TIMEOUT);
+    }
+
+    @ExceptionHandler(EmployeeServiceUnavailableException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmployeeServiceUnavailable(EmployeeServiceUnavailableException ex, WebRequest request) {
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.BAD_GATEWAY.value(),
+            HttpStatus.BAD_GATEWAY.getReasonPhrase(),
+            ex.getReason(),
+            request.getDescription(false).replace("uri=", ""),
+            null,
+            null,
+            null
+        );
+        body.setService(ex.getService());
+        body.setUpstreamStatus(ex.getUpstreamStatus());
+        return new ResponseEntity<>(body, HttpStatus.BAD_GATEWAY);
+    }
+
+    @ExceptionHandler(CircuitBreakerOpenException.class)
+    public ResponseEntity<ApiErrorResponse> handleCircuitBreakerOpen(CircuitBreakerOpenException ex, WebRequest request) {
+        ApiErrorResponse body = new ApiErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.SERVICE_UNAVAILABLE.value(),
+            HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
+            ex.getReason(),
+            request.getDescription(false).replace("uri=", ""),
+            null,
+            null,
+            null
+        );
+        body.setCircuitBreakerState(ex.getCircuitBreakerState());
+        body.setRetryAfter(ex.getRetryAfter());
+        return new ResponseEntity<>(body, HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
     @ExceptionHandler(TimeConflictException.class)
     public ResponseEntity<ApiErrorResponse> handleTimeConflict(TimeConflictException ex, WebRequest request) {
         ApiErrorResponse body = new ApiErrorResponse(
@@ -153,68 +218,53 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleAuthenticationException(org.springframework.security.core.AuthenticationException ex, WebRequest request) {
-        ApiErrorResponse body = new ApiErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.UNAUTHORIZED.value(),
-            HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-            "JWT-Token ist ungültig oder abgelaufen.",
-            request.getDescription(false).replace("uri=", ""),
-            null,
-            null,
-            null,
-            ex.getMessage(),
-            null,
-            null
-        );
+        ApiErrorResponse body = ApiErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+            .message("JWT-Token ist ungültig oder abgelaufen.")
+            .path(request.getDescription(false).replace("uri=", ""))
+            .details(ex.getMessage())
+            .build();
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex, WebRequest request) {
-        ApiErrorResponse body = new ApiErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.FORBIDDEN.value(),
-            HttpStatus.FORBIDDEN.getReasonPhrase(),
-            "Unzureichende Berechtigungen. Erforderliche Rolle: hitec-employee",
-            request.getDescription(false).replace("uri=", ""),
-            null,
-            null,
-            null,
-            null,
-            List.of("hitec-employee"),
-            List.of()
-        );
+        ApiErrorResponse body = ApiErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.FORBIDDEN.value())
+            .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+            .message("Unzureichende Berechtigungen. Erforderliche Rolle: hitec-employee")
+            .path(request.getDescription(false).replace("uri=", ""))
+            .requiredRoles(List.of("hitec-employee"))
+            .userRoles(List.of())
+            .build();
         return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiErrorResponse> handleResponseStatus(ResponseStatusException ex, WebRequest request) {
         HttpStatus status = (HttpStatus) ex.getStatusCode();
-        ApiErrorResponse body = new ApiErrorResponse(
-            LocalDateTime.now(),
-            status.value(),
-            status.getReasonPhrase(),
-            ex.getReason(),
-            request.getDescription(false).replace("uri=", ""),
-            null,
-            null,
-            null
-        );
+        ApiErrorResponse body = ApiErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(status.value())
+            .error(status.getReasonPhrase())
+            .message(ex.getReason())
+            .path(request.getDescription(false).replace("uri=", ""))
+            .build();
         return new ResponseEntity<>(body, status);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
-        ApiErrorResponse body = new ApiErrorResponse(
-            LocalDateTime.now(),
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-            ex.getMessage(),
-            request.getDescription(false).replace("uri=", ""),
-            null,
-            null,
-            null
-        );
+        ApiErrorResponse body = ApiErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+            .message(ex.getMessage())
+            .path(request.getDescription(false).replace("uri=", ""))
+            .build();
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

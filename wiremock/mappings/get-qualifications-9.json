@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/9/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 9,
+      "qualifications": [
+        {
+          "name": "Full Stack Developer",
+          "level": "SENIOR",
+          "validUntil": "2026-12-31"
+        },
+        {
+          "name": "Scrum Master",
+          "level": "PROFESSIONAL",
+          "validUntil": "2027-03-31"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+

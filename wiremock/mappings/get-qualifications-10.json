@@ -1,0 +1,29 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPattern": "/employees/10/qualifications"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "employeeId": 10,
+      "qualifications": [
+        {
+          "name": "Data Scientist",
+          "level": "EXPERT",
+          "validUntil": "2027-06-30"
+        },
+        {
+          "name": "Machine Learning Engineer",
+          "level": "SENIOR",
+          "validUntil": "2026-11-30"
+        }
+      ]
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+
